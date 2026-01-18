@@ -27,6 +27,12 @@ app.add_middleware(
 # Disable pyautogui failsafe
 pyautogui.FAILSAFE = False
 
+
+@app.get("/")
+def root():
+    return {"message": "Mobile Remote Desktop Server", "status": "running"}
+
+
 # Register routers
 app.include_router(screen_size.router)
 app.include_router(capture.router)

@@ -35,6 +35,9 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
 
 ## API Endpoints
 
+### Root
+- `GET /` - Returns `{ message: str, status: str }` - Health check
+
 ### Screen Info
 - `GET /screen-size` - Returns `{ width: int, height: int }`
 
@@ -114,6 +117,12 @@ app.add_middleware(
 
 # Disable pyautogui failsafe
 pyautogui.FAILSAFE = False
+
+
+@app.get("/")
+def root():
+    return {"message": "Mobile Remote Desktop Server", "status": "running"}
+
 
 # Register routers
 app.include_router(screen_size.router)
