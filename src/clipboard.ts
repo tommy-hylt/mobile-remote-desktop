@@ -1,11 +1,25 @@
 import { Router } from 'express';
-import { clipboard } from '@nut-tree/nut-js';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
+const execAsync = promisify(exec);
 const router = Router();
+
+// Use PowerShell for clipboard operations on Windows
+async function getClipboard(): Promise<string> {
+  const { stdout } = await execAsync('powershell -command "Get-Clipboard"');
+  return stdout.trim();
+}
+
+async function setClipboard(text: string): Promise<void> {
+  // Escape single quotes and use PowerShell
+  const escaped = text.replace(/'/g, "''");
+  await execAsync(`powershell -command "Set-Clipboard -Value '${escaped}'"`);
+}
 
 router.get('/clipboard', async (req, res) => {
   try {
-    const text = await clipboard.getContent();
+    const text = await getClipboard();
     res.json({ text });
   } catch (error) {
     console.error('Error getting clipboard:', error);
@@ -21,7 +35,7 @@ router.post('/clipboard', async (req, res) => {
       return res.status(400).json({ error: 'Invalid parameter. Required: text (string)' });
     }
 
-    await clipboard.setContent(text);
+    await setClipboard(text);
     res.json({ success: true });
   } catch (error) {
     console.error('Error setting clipboard:', error);

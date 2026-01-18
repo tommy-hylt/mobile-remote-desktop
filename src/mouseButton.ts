@@ -1,16 +1,10 @@
 import { Router } from 'express';
-import { mouse, Button } from '@nut-tree/nut-js';
+import { mouseButton } from './winInput';
 import { state } from './state';
 
 const router = Router();
 
 const SAFETY_TIMEOUT_MS = 10000;
-
-const buttonMap: { [key: string]: Button } = {
-  left: Button.LEFT,
-  right: Button.RIGHT,
-  middle: Button.MIDDLE,
-};
 
 type ButtonName = 'left' | 'right' | 'middle';
 
@@ -25,7 +19,7 @@ async function releaseButton(buttonName: ButtonName): Promise<void> {
     buttonState.timer = null;
   }
   if (buttonState.isDown) {
-    await mouse.releaseButton(buttonMap[buttonName]);
+    await mouseButton(buttonName, 'up');
     buttonState.isDown = false;
   }
 }
@@ -42,7 +36,6 @@ router.post('/mouse/:button/:action', async (req, res) => {
       return res.status(400).json({ error: 'Invalid action. Use: up or down' });
     }
 
-    const nutButton = buttonMap[button];
     const buttonState = state.mouseButtons[button];
 
     if (action === 'down') {
@@ -50,7 +43,7 @@ router.post('/mouse/:button/:action', async (req, res) => {
         clearTimeout(buttonState.timer);
       }
 
-      await mouse.pressButton(nutButton);
+      await mouseButton(button, 'down');
       buttonState.isDown = true;
 
       buttonState.timer = setTimeout(async () => {

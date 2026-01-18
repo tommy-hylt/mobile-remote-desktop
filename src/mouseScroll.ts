@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { mouse } from '@nut-tree/nut-js';
+import { mouseScroll } from './winInput';
 
 const router = Router();
 
@@ -11,16 +11,7 @@ router.post('/mouse/scroll', async (req, res) => {
       return res.status(400).json({ error: 'Invalid parameters. Required: x, y (numbers)' });
     }
 
-    if (x !== 0) {
-      await mouse.scrollRight(x > 0 ? x : 0);
-      await mouse.scrollLeft(x < 0 ? -x : 0);
-    }
-
-    if (y !== 0) {
-      await mouse.scrollDown(y > 0 ? y : 0);
-      await mouse.scrollUp(y < 0 ? -y : 0);
-    }
-
+    await mouseScroll(x, y);
     res.json({ success: true, x, y });
   } catch (error) {
     console.error('Error scrolling:', error);

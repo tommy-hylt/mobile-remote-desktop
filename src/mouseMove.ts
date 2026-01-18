@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { mouse, Point } from '@nut-tree/nut-js';
+import { moveMouse } from './winInput';
 
 const router = Router();
 
@@ -11,7 +11,7 @@ router.post('/mouse/move', async (req, res) => {
       return res.status(400).json({ error: 'Invalid parameters. Required: x, y (numbers)' });
     }
 
-    await mouse.setPosition(new Point(x, y));
+    await moveMouse(x, y);
     res.json({ success: true, x, y });
   } catch (error) {
     console.error('Error moving mouse:', error);

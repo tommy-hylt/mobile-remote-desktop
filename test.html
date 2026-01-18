@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>Input Test</title></head>
+<body style="margin:0;padding:20px;font-family:monospace">
+<h2>Input Test Page</h2>
+<div id="log" style="white-space:pre;background:#eee;padding:10px;height:300px;overflow:auto"></div>
+<script>
+window.events = [];
+function log(msg) {
+  window.events.push(msg);
+  document.getElementById('log').textContent = window.events.slice(-20).join('\n');
+}
+document.addEventListener('mousemove', e => log('move:'+e.clientX+','+e.clientY));
+document.addEventListener('mousedown', e => log('down:'+e.button));
+document.addEventListener('mouseup', e => log('up:'+e.button));
+document.addEventListener('click', e => log('click:'+e.clientX+','+e.clientY));
+document.addEventListener('wheel', e => log('scroll:'+e.deltaX+','+e.deltaY));
+document.addEventListener('keydown', e => log('key:'+e.key));
+</script>
+</body>
+</html>

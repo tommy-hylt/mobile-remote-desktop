@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 3; Invoke-RestMethod -Uri ''http://localhost:6485/screen-size''\")",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 5; Invoke-RestMethod -Uri ''http://localhost:6485/screen-size''\")",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__resize_page",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__select_page",
+      "mcp__chrome-devtools__close_page",
+      "Bash(git add:*)",
+      "Bash(powershell:*)",
+      "Bash(del \"\\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\")",
+      "Bash(cmd.exe /c \"del \"\"\\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\"\"\")",
+      "Bash(cmd.exe /c \"ren \"\"\\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\"\" nul_delete.txt\")",
+      "Bash(ls:*)"
+    ]
+  }
+}
