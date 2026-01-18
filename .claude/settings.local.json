@@ -18,7 +18,10 @@
       "Bash(del \"\\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\")",
       "Bash(cmd.exe /c \"del \"\"\\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\"\"\")",
       "Bash(cmd.exe /c \"ren \"\"\\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\"\" nul_delete.txt\")",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(pip install:*)",
+      "Bash(python -m pip install:*)",
+      "Bash(python:*)"
     ]
   }
 }
