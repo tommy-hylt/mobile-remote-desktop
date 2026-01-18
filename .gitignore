@@ -9,9 +9,6 @@ venv/
 env/
 .env
 
-# Data
-data/
-
 # Logs
 *.log
 

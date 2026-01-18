@@ -4,10 +4,7 @@ import pyautogui
 
 from routes import (
     screen_size,
-    capture_area,
     capture,
-    capture_new_only,
-    capture_full,
     mouse_position,
     mouse_move,
     mouse_button,
@@ -32,10 +29,7 @@ pyautogui.FAILSAFE = False
 
 # Register routers
 app.include_router(screen_size.router)
-app.include_router(capture_area.router)
 app.include_router(capture.router)
-app.include_router(capture_new_only.router)
-app.include_router(capture_full.router)
 app.include_router(mouse_position.router)
 app.include_router(mouse_move.router)
 app.include_router(mouse_button.router)

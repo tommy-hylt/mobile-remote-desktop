@@ -19,10 +19,7 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
   /routes
     __init__.py
     screen_size.py     # GET /screen-size
-    capture_area.py    # GET/POST /capture/area
     capture.py         # GET /capture
-    capture_new_only.py # GET /capture/new-only
-    capture_full.py    # GET /capture/full
     mouse_position.py  # GET /mouse/position
     mouse_move.py      # POST /mouse/move
     mouse_button.py    # POST /mouse/{button}/{action}
@@ -33,12 +30,7 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
   /core
     __init__.py
     state.py           # Shared state (mouse_down_timers)
-    config.py          # Constants (DATA_DIR, PORT)
-  /data
-    area.json          # Saved capture area
-    capture.png        # Last captured image
-    capture-hash.txt   # Last capture hash
-    screen.png         # Last full screen capture
+    config.py          # Constants (PORT)
 ```
 
 ## API Endpoints
@@ -46,21 +38,13 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
 ### Screen Info
 - `GET /screen-size` - Returns `{ width: int, height: int }`
 
-### Capture Area
-- `GET /capture/area` - Returns saved value `{ x: int, y: int, w: int, h: int }`
-- `POST /capture/area` - Body: `{ x, y, w, h }` - Sets capture region
-- Save into file "data/area.json"
-
 ### Screen Capture
-- `GET /capture` - Returns PNG image of current capture area
-- `GET /capture/new-only` - Returns PNG only if screen changed, else 204 No Content
-- Read file "data/area.json"
-- Save last image into "data/capture.png"
-- Save last image's hash into "data/capture-hash.txt"
-
-### Full Screen Capture
-- `GET /capture/full` - Returns PNG image of current screen
-- Save last image into "data/screen.png"
+- `GET /capture` - Returns PNG image of capture area
+  - Query param `area` (optional): `x,y,w,h` format (e.g., `?area=0,0,800,600`)
+  - If no area specified, captures full screen
+  - Header `Last-Hash` (optional): MD5 hash of previous capture
+  - If `Last-Hash` matches current capture hash, returns 204 No Content
+  - Response header `Next-Hash` contains the MD5 hash of returned image
 
 ### Mouse Control
 - `GET /mouse/position` - Returns `{ x: int, y: int }`
@@ -90,12 +74,7 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
 
 ### core/config.py
 ```python
-import os
-
-DATA_DIR = "data"
 PORT = 6485
-
-os.makedirs(DATA_DIR, exist_ok=True)
 ```
 
 ### core/state.py
@@ -113,10 +92,7 @@ import pyautogui
 
 from routes import (
     screen_size,
-    capture_area,
     capture,
-    capture_new_only,
-    capture_full,
     mouse_position,
     mouse_move,
     mouse_button,
@@ -141,10 +117,7 @@ pyautogui.FAILSAFE = False
 
 # Register routers
 app.include_router(screen_size.router)
-app.include_router(capture_area.router)
 app.include_router(capture.router)
-app.include_router(capture_new_only.router)
-app.include_router(capture_full.router)
 app.include_router(mouse_position.router)
 app.include_router(mouse_move.router)
 app.include_router(mouse_button.router)
@@ -171,131 +144,56 @@ def screen_size():
     return {"width": size.width, "height": size.height}
 ```
 
-### routes/capture_area.py
-```python
-from fastapi import APIRouter
-from pydantic import BaseModel
-import pyautogui
-import json
-import os
-
-from core.config import DATA_DIR
-
-router = APIRouter()
-
-class Area(BaseModel):
-    x: int
-    y: int
-    w: int
-    h: int
-
-def get_area() -> dict:
-    path = os.path.join(DATA_DIR, "area.json")
-    if os.path.exists(path):
-        with open(path) as f:
-            return json.load(f)
-    size = pyautogui.size()
-    return {"x": 0, "y": 0, "w": size.width, "h": size.height}
-
-@router.get("/capture/area")
-def get_capture_area():
-    return get_area()
-
-@router.post("/capture/area")
-def set_capture_area(area: Area):
-    path = os.path.join(DATA_DIR, "area.json")
-    with open(path, "w") as f:
-        json.dump(area.model_dump(), f)
-    return {"success": True, "area": area.model_dump()}
-```
-
 ### routes/capture.py
 ```python
-from fastapi import APIRouter, Response
-import mss
-import os
-
-from core.config import DATA_DIR
-from routes.capture_area import get_area
-
-router = APIRouter()
-
-@router.get("/capture")
-def capture():
-    area = get_area()
-    with mss.mss() as sct:
-        monitor = {"left": area["x"], "top": area["y"], "width": area["w"], "height": area["h"]}
-        img = sct.grab(monitor)
-        png_data = mss.tools.to_png(img.rgb, img.size)
-
-    with open(os.path.join(DATA_DIR, "capture.png"), "wb") as f:
-        f.write(png_data)
-
-    return Response(content=png_data, media_type="image/png")
-```
-
-### routes/capture_new_only.py
-```python
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, Header
+from typing import Optional
 import mss
 import hashlib
-import os
-
-from core.config import DATA_DIR
-from routes.capture_area import get_area
+import pyautogui
 
 router = APIRouter()
 
 def get_image_hash(data: bytes) -> str:
     return hashlib.md5(data).hexdigest()
 
-@router.get("/capture/new-only")
-def capture_new_only():
-    area = get_area()
+def parse_area(area: Optional[str]) -> dict:
+    """Parse area string 'x,y,w,h' into dict. Returns full screen if None."""
+    if area:
+        parts = area.split(",")
+        if len(parts) == 4:
+            return {
+                "left": int(parts[0]),
+                "top": int(parts[1]),
+                "width": int(parts[2]),
+                "height": int(parts[3]),
+            }
+    # Default to full screen
+    size = pyautogui.size()
+    return {"left": 0, "top": 0, "width": size.width, "height": size.height}
+
+@router.get("/capture")
+def capture(
+    area: Optional[str] = None,
+    last_hash: Optional[str] = Header(None, alias="Last-Hash")
+):
+    monitor = parse_area(area)
+
     with mss.mss() as sct:
-        monitor = {"left": area["x"], "top": area["y"], "width": area["w"], "height": area["h"]}
         img = sct.grab(monitor)
         png_data = mss.tools.to_png(img.rgb, img.size)
 
     new_hash = get_image_hash(png_data)
-    hash_path = os.path.join(DATA_DIR, "capture-hash.txt")
 
-    old_hash = ""
-    if os.path.exists(hash_path):
-        with open(hash_path) as f:
-            old_hash = f.read().strip()
+    # If client provided Last-Hash and it matches, return 204
+    if last_hash and last_hash == new_hash:
+        return Response(status_code=204, headers={"Next-Hash": new_hash})
 
-    if new_hash == old_hash:
-        return Response(status_code=204)
-
-    with open(hash_path, "w") as f:
-        f.write(new_hash)
-    with open(os.path.join(DATA_DIR, "capture.png"), "wb") as f:
-        f.write(png_data)
-
-    return Response(content=png_data, media_type="image/png")
-```
-
-### routes/capture_full.py
-```python
-from fastapi import APIRouter, Response
-import mss
-import os
-
-from core.config import DATA_DIR
-
-router = APIRouter()
-
-@router.get("/capture/full")
-def capture_full():
-    with mss.mss() as sct:
-        img = sct.grab(sct.monitors[1])
-        png_data = mss.tools.to_png(img.rgb, img.size)
-
-    with open(os.path.join(DATA_DIR, "screen.png"), "wb") as f:
-        f.write(png_data)
-
-    return Response(content=png_data, media_type="image/png")
+    return Response(
+        content=png_data,
+        media_type="image/png",
+        headers={"Next-Hash": new_hash}
+    )
 ```
 
 ### routes/mouse_position.py
@@ -450,10 +348,7 @@ def shutdown():
 ```python
 from . import (
     screen_size,
-    capture_area,
     capture,
-    capture_new_only,
-    capture_full,
     mouse_position,
     mouse_move,
     mouse_button,
@@ -496,7 +391,7 @@ Enable CORS for mobile web client access. Allowed all origins.
 
 All routes should handle exceptions and return appropriate HTTP status codes:
 - 200: Success
-- 204: No Content (for new-only when unchanged)
+- 204: No Content (when LAST_HASH matches current capture)
 - 400: Bad Request (invalid parameters)
 - 500: Server Error
 
@@ -505,7 +400,9 @@ All routes should handle exceptions and return appropriate HTTP status codes:
 ### Screen Capture
 - Use `mss` for fast screen capture (faster than PIL/Pillow)
 - mss returns raw RGB data, use `mss.tools.to_png()` to convert
-- For `new-only`, compute MD5 hash of PNG bytes and compare with stored hash
+- Client sends `Last-Hash` header with previous capture's hash
+- Server returns `Next-Hash` header with current capture's MD5 hash
+- If hashes match, return 204 No Content (no image data)
 
 ### Mouse Down Safety
 - On `/mouse/{button}/down`, start 10-second timer

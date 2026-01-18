@@ -2,8 +2,8 @@
 
 ## Prerequisites
 ```bash
-npm install
-npm run dev
+pip install -r requirements.txt
+python main.py
 ```
 Server: http://localhost:6485
 
@@ -21,8 +21,6 @@ The test page logs all input events to `window.events` array:
 ### Phase 1: Basic API Tests (curl)
 ```bash
 curl http://localhost:6485/screen-size
-curl http://localhost:6485/capture/area
-curl -X POST http://localhost:6485/capture/area -H "Content-Type: application/json" -d '{"x":0,"y":0,"w":800,"h":600}'
 curl http://localhost:6485/mouse/position
 curl -X POST http://localhost:6485/clipboard -H "Content-Type: application/json" -d '{"text":"test"}'
 curl http://localhost:6485/clipboard
@@ -30,9 +28,17 @@ curl http://localhost:6485/clipboard
 
 ### Phase 2: Screen Capture Tests (curl)
 ```bash
+# Full screen capture (no area param)
 curl http://localhost:6485/capture -o capture.png
-curl http://localhost:6485/capture/full -o full.png
-curl -w "%{http_code}" http://localhost:6485/capture/new-only -o new.png
+
+# Capture with area parameter
+curl "http://localhost:6485/capture?area=0,0,800,600" -o capture_area.png
+
+# Test hash-based caching (first request gets image + Next-Hash header)
+curl -i http://localhost:6485/capture -o first.png
+# Note the Next-Hash header value, then use it:
+curl -i -H "Last-Hash: <hash_from_above>" http://localhost:6485/capture
+# Should return 204 No Content if screen unchanged
 ```
 
 ### Phase 3: Mouse & Keyboard Tests
@@ -76,11 +82,9 @@ curl -X POST http://localhost:6485/shutdown
 | Test | Expected |
 |------|----------|
 | screen-size | `{"width":N,"height":N}` |
-| capture/area GET | `{"x":N,"y":N,"w":N,"h":N}` |
-| capture/area POST | `{"success":true,...}` |
-| capture | PNG binary |
-| capture/full | PNG binary |
-| capture/new-only | PNG or 204 |
+| capture (no area) | PNG binary + Next-Hash header |
+| capture?area=x,y,w,h | PNG binary of specified region |
+| capture with Last-Hash | 204 if unchanged, PNG if changed |
 | mouse/position | `{"x":N,"y":N}` |
 | mouse/move | `{"success":true}` + events |
 | mouse/btn/down | `{"success":true}` |
