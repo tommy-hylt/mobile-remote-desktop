@@ -38,3 +38,9 @@ These guidelines reflect the preferred coding style for this project and should 
 
 ## 7. One File for One Component/Function
 *   **Single Responsibility**: Each file should contain only one component or a closely related set of components.
+*   **File Size**: Keep file sizes small. Ideally under 60 lines, strictly under 100 lines.
+*   **Split Large Files**: Components growing beyond 100 lines must be split into smaller sub-components or hooks.
+
+## 8. Anonymous Functions
+*   **Avoid Named One-Off Functions**: Do not name functions that are only used once (e.g., inside `useEffect`). Use anonymous functions or defined callbacks directly.
+*   **Conciseness**: Prefer arrow functions and concise syntax.

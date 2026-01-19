@@ -1,61 +1,60 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useRef } from 'react';
+import type { Rect, ScreenSize } from '../types';
+import { useScreenImages } from './useScreenImages';
+import { useTouchZoom } from './useTouchZoom';
 import './Screen.css';
 
-export const Screen = () => {
-  const [images, setImages] = useState<string[]>([]);
+interface ScreenProps {
+  area: Rect;
+  screenSize: ScreenSize;
+  onAreaChange: (area: Rect) => void;
+}
 
-  const fetchCapture = useCallback(async () => {
-    try {
-      const response = await fetch('/capture');
-      if (response.ok) {
-        if (response.status === 204) {
-          return;
-        }
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        setImages((prev) => {
-          const newImages = [...prev, url];
-          if (newImages.length > 3) {
-            // Optional: revoke old url to be nice, though browser handles simple cases well
-            // URL.revokeObjectURL(newImages[0]);
-            return newImages.slice(newImages.length - 3);
-          }
-          return newImages;
-        });
-      } else {
-        console.error('Failed to fetch capture:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error fetching capture:', error);
-    }
-  }, []);
+export const Screen = ({ area, screenSize, onAreaChange }: ScreenProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { images, fetchCapture } = useScreenImages(area);
 
-  useEffect(() => {
-    fetchCapture();
-  }, [fetchCapture]);
-
-  const handleClick = () => {
-    fetchCapture();
-  };
+  useTouchZoom(containerRef, area, screenSize, onAreaChange);
 
   if (images.length === 0) {
     return (
-      <div className="screen-Screen" onClick={handleClick}>
+      <div ref={containerRef} className="screen-Screen" onClick={() => fetchCapture()}>
         <p>Loading remote screen...</p>
       </div>
     );
   }
 
   return (
-    <div className="screen-Screen" onClick={handleClick}>
-      {images.map((imgUrl, index) => (
-        <img
-          key={index}
-          src={imgUrl}
-          alt={`Remote Screen ${index}`}
-          className="image"
-        />
-      ))}
+    <div
+      ref={containerRef}
+      className="screen-Screen"
+      onClick={() => fetchCapture()}
+      style={{ overflow: 'hidden', position: 'relative', width: '100vw', height: '100vh' }}
+    >
+      {images.map((img, index) => {
+        const left = ((img.area.x - area.x) / area.w) * 100;
+        const top = ((img.area.y - area.y) / area.h) * 100;
+        const width = (img.area.w / area.w) * 100;
+        const height = (img.area.h / area.h) * 100;
+
+        return (
+          <img
+            key={index}
+            src={img.url}
+            alt={`Remote Screen ${index}`}
+            className="image"
+            style={{
+              position: 'absolute',
+              left: `${left}%`,
+              top: `${top}%`,
+              width: `${width}%`,
+              height: `${height}%`,
+              pointerEvents: 'none',
+              objectFit: 'fill',
+            }}
+          />
+        );
+      })}
     </div>
   );
 };
