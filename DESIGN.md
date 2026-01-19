@@ -21,7 +21,7 @@ src/
 
 ## Server Side
 
-Server side is well writen in "../mobile-remote-desktop-server". Read "CLAUDE.md" there for API details.
+Server side is well writen in "../mobile-remote-desktop-server". Read [CLAUDE.md](../mobile-remote-desktop-server/CLAUDE.md) there for API details.
 
 ## Implementation Approach
 
