@@ -55,11 +55,13 @@ export const captureManager = (onImage: (img: ScreenImage) => void) => {
             (i.status === 'firing' || i.status === 'ended') ? Math.max(max, i.time) : max, 0);
 
         const recent = items.filter(i => i.status === 'ended').slice(-5) as EndedItem[];
-        const avg = recent.length ? recent.reduce((s, i) => s + i.duration, 0) / recent.length : 1000;
+        const avg = recent.length ? recent.reduce((s, i) => s + i.duration, 0) / recent.length : 4000;
         const interval = Math.min(Math.max(avg / 2, 0), 30000);
 
         const queuing = items.find(i => i.status === 'queuing') as QueuingItem | undefined;
-        if (queuing && now - lastFire > interval) {
+        const firingCount = items.filter(i => i.status === 'firing').length;
+
+        if (queuing && now - lastFire > interval && firingCount < 4) {
             const firing: FiringItem = { status: 'firing', time: now, controller: new AbortController() };
             items = items.map(i => i === queuing ? firing : i);
             execute(firing, queuing.area);

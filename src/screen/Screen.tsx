@@ -41,6 +41,16 @@ export const Screen = ({ viewport, screenSize, onViewportChange }: ScreenProps) 
         </div>
       )}
 
+      <div
+        className="screen-border"
+        style={{
+          left: `${viewport.u - 2}px`,
+          top: `${viewport.v - 2}px`,
+          width: `${screenSize.width * viewport.scale + 4}px`,
+          height: `${screenSize.height * viewport.scale + 4}px`,
+        }}
+      />
+
       {images.map((img, index) => (
         <img
           key={index}
