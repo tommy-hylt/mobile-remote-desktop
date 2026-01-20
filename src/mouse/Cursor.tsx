@@ -1,24 +1,23 @@
 import { useRef } from 'react';
 import type { ViewportState } from '../screen/ViewportState';
-import './Mouse.css';
+import './Cursor.css';
 
-interface MouseCursorProps {
+interface CursorProps {
     x: number;
     y: number;
     viewport: ViewportState;
-    isActive: boolean;
     setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
     setCursorPos: React.Dispatch<React.SetStateAction<{ x: number, y: number }>>;
 }
 
-export const MouseCursor = ({
-    x, y, viewport, isActive, setIsActive, setCursorPos
-}: MouseCursorProps) => {
+export const Cursor = ({
+    x, y, viewport, setIsActive, setCursorPos
+}: CursorProps) => {
     const lastPosRef = useRef<{ x: number, y: number } | null>(null);
 
     return (
         <div
-            className={`mouse-Mouse center-close ${isActive ? 'active' : ''}`}
+            className="mouse-Cursor"
             style={{
                 left: `${x}px`,
                 top: `${y}px`,

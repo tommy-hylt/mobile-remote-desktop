@@ -1,0 +1,15 @@
+.mouse-LeftButton {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background-color: #ff5fcf;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    touch-action: none;
+    z-index: 1001;
+}
+
+.mouse-LeftButton:active {
+    background-color: #9929ea;
+}

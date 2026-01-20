@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import type { ViewportState } from '../screen/ViewportState';
-import { MouseControls } from './MouseControls';
-import { MouseCursor } from './MouseCursor';
-import './Mouse.css';
+import { Cursor } from './Cursor';
+import { LeftButton } from './LeftButton';
+import { RightButton } from './RightButton';
+import { ScrollButton } from './ScrollButton';
 
 interface MouseProps {
     viewport: ViewportState;
@@ -15,21 +16,26 @@ export const Mouse = ({ viewport }: MouseProps) => {
     const x = cursorPos.x * viewport.scale + viewport.u;
     const y = cursorPos.y * viewport.scale + viewport.v;
 
+    // Offsets for buttons relative to cursor
+    // Reducing shift to match smaller button size if needed, but keeping 60px as base for now
+    const SHIFT = 60;
+
     return (
         <>
-            <MouseCursor
+            <Cursor
                 x={x}
                 y={y}
                 viewport={viewport}
-                isActive={isActive}
                 setIsActive={setIsActive}
                 setCursorPos={setCursorPos}
             />
-            <MouseControls
-                x={x}
-                y={y}
-                isActive={isActive}
-            />
+            {isActive && (
+                <>
+                    <LeftButton x={x - SHIFT} y={y} />
+                    <ScrollButton x={x} y={y + SHIFT} />
+                    <RightButton x={x + SHIFT} y={y} />
+                </>
+            )}
         </>
     );
 };
