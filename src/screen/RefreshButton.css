@@ -1,0 +1,31 @@
+.screen-RefreshButton {
+    position: absolute;
+    /* Top and Left set via inline styles */
+    touch-action: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #9929ea;
+    /* Purple */
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+    &:active {
+        background-color: #ff5fcf;
+        /* Pink */
+        transform: scale(0.95);
+    }
+
+    .icon {
+        width: 24px;
+        height: 24px;
+        color: #faeb92;
+        /* Yellow */
+    }
+}

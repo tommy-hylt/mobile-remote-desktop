@@ -21,7 +21,7 @@ function App() {
 
           setViewport({
             u: (window.innerWidth - size.width * scale) / 2,
-            v: (window.innerHeight - size.height * scale) / 2,
+            v: 0,
             scale,
           });
         }

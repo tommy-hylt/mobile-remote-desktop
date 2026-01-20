@@ -1,18 +1,22 @@
 .screen-Screen {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100vw;
+    height: 100dvh;
     position: relative;
-    cursor: pointer;
+    overflow: hidden;
+
+    .loading-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        pointer-events: none;
+    }
 
     .image {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+        pointer-events: none;
+        object-fit: fill;
     }
 }
