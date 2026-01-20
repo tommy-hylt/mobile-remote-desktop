@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import type { ViewportState } from './ViewportState';
 import type { ScreenSize } from './ScreenSize';
 import type { Rect } from './Rect';
@@ -6,21 +6,21 @@ import type { ScreenImage } from './ScreenImage';
 import { useCaptureManager } from './useCaptureManager';
 
 export const useScreenImages = (viewport: ViewportState, screenSize: ScreenSize) => {
-    const { enqueue, lastImage } = useCaptureManager(screenSize);
     const [images, setImages] = useState<ScreenImage[]>([]);
 
-    useEffect(() => {
-        if (!lastImage) return;
+    const handleImage = useCallback((img: ScreenImage) => {
         setImages((prev) => {
-            const oldImages = prev.filter((img) => getCoverageRatio(img.area, lastImage.area) < 1);
+            const oldImages = prev.filter((i) => getCoverageRatio(i.area, img.area) < 1);
             const sortedImages = [...oldImages].sort(
-                (a, b) => getCoverageRatio(a.area, lastImage.area) - getCoverageRatio(b.area, lastImage.area));
+                (a, b) => getCoverageRatio(a.area, img.area) - getCoverageRatio(b.area, img.area));
             const keptImages = oldImages.filter(c => sortedImages.indexOf(c) < 2);
-            return [...keptImages, lastImage];
+            return [...keptImages, img];
         });
-    }, [lastImage]);
+    }, []);
 
-    const calcArea = () => {
+    const { enqueue } = useCaptureManager(handleImage);
+
+    const calcArea = useCallback(() => {
         const visibleX = -viewport.u / viewport.scale;
         const visibleY = -viewport.v / viewport.scale;
         const visibleW = window.innerWidth / viewport.scale;
@@ -32,7 +32,7 @@ export const useScreenImages = (viewport: ViewportState, screenSize: ScreenSize)
         const h = Math.round(Math.min(screenSize.height - y, visibleH));
 
         return { x, y, w, h };
-    };
+    }, [viewport, screenSize]);
 
     useEffect(() => {
         const tick = () => {
@@ -44,7 +44,7 @@ export const useScreenImages = (viewport: ViewportState, screenSize: ScreenSize)
 
         const t = setInterval(tick, 1000);
         return () => clearInterval(t);
-    }, [viewport, screenSize, enqueue]);
+    }, [calcArea, enqueue]);
 
     return {
         images,
