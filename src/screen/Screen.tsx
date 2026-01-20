@@ -4,6 +4,7 @@ import type { ViewportState } from './ViewportState';
 import { useScreenImages } from './useScreenImages';
 import { useTouchZoom } from './useTouchZoom';
 import { RefreshButton } from './RefreshButton';
+import { ZoomOutButton } from './ZoomOutButton';
 import './Screen.css';
 
 interface ScreenProps {
@@ -17,6 +18,18 @@ export const Screen = ({ viewport, screenSize, onViewportChange }: ScreenProps) 
   const { images, fetchCapture } = useScreenImages(viewport, screenSize);
 
   useTouchZoom(containerRef, viewport, screenSize, onViewportChange);
+
+  const handleZoomOut = () => {
+    const scaleW = window.innerWidth / screenSize.width;
+    const scaleH = window.innerHeight / screenSize.height;
+    const scale = Math.min(scaleW, scaleH);
+
+    onViewportChange({
+      u: (window.innerWidth - screenSize.width * scale) / 2,
+      v: 0,
+      scale,
+    });
+  };
 
   return (
     <div ref={containerRef} className="screen-Screen">
@@ -42,6 +55,7 @@ export const Screen = ({ viewport, screenSize, onViewportChange }: ScreenProps) 
       ))}
 
       <RefreshButton onClick={() => fetchCapture()} />
+      <ZoomOutButton onClick={handleZoomOut} />
     </div>
   );
 };
