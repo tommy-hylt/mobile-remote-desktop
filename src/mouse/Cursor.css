@@ -8,6 +8,5 @@
     touch-action: none;
     background-color: rgba(0, 0, 0, 0.4);
     transform: translate(-12px, -12px);
-    z-index: 1000;
     transition: opacity 0.2s;
 }

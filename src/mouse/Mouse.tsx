@@ -18,7 +18,7 @@ export const Mouse = ({ viewport }: MouseProps) => {
 
     // Offsets for buttons relative to cursor
     // Reducing shift to match smaller button size if needed, but keeping 60px as base for now
-    const SHIFT = 60;
+    const SHIFT = 40;
 
     return (
         <>
