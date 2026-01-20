@@ -19,8 +19,9 @@ These guidelines reflect the preferred coding style for this project and should 
     *   **Extraction**: Extract complex logic into small, reasonably named helper functions.
     *   **Types**: Use explicit TypeScript types and interfaces to clarify data structures instead of documenting them.
 
-## 3. Anonymous Functions & Helpers
-*   **Avoid Named One-Off Functions**: Do not name functions that are only used once (e.g., inside `useEffect` or as a minor helper). Use anonymous functions or defined callbacks directly.
+## 3. Inline Logic & Anonymous Functions
+*   **Inline Logic**: For functions only used once in one place, do not name or create them. Write the code directly in the place of use (e.g., inside the event handler prop).
+*   **Avoid Named One-Off Functions**: Strictly avoid naming functions that are only used once.
 *   **Conciseness**: Prefer arrow functions and concise syntax.
 
 ## 4. Code Quality & Linting

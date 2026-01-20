@@ -1,0 +1,47 @@
+.mouse-MouseControls {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    &.active {
+        display: block;
+    }
+
+    .dot {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Left Dot - Red */
+    .dot.left {
+        background-color: #ff5f5f;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* Right Dot - Blue */
+    .dot.right {
+        background-color: #5f5fff;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* Middle Dot - Green */
+    .dot.middle {
+        background-color: #5fff5f;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
