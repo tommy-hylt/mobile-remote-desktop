@@ -12,11 +12,11 @@ export const LeftButton = ({ x, y }: LeftButtonProps) => {
       style={{ left: x, top: y }}
       onPointerDown={(e) => {
         e.stopPropagation();
-        fetch('/mouse/left/down', { method: 'POST' });
+        fetch('/mouse/left/down', { method: 'POST' }).catch(() => {});
       }}
       onPointerUp={(e) => {
         e.stopPropagation();
-        fetch('/mouse/left/up', { method: 'POST' });
+        fetch('/mouse/left/up', { method: 'POST' }).catch(() => {});
       }}
     ></div>
   );

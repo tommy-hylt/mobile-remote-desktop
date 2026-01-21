@@ -13,11 +13,20 @@ export const useFetchCapture = () => {
       area: Rect,
       signal: AbortSignal,
       lastHash: string | null,
+      scale: number = 1,
     ): Promise<CaptureResult | null> => {
       const { x, y, w, h } = area;
       const params = new URLSearchParams({
         area: `${x},${y},${w},${h}`,
+        quality: '80',
       });
+
+      if (scale < 1) {
+        const resizeW = Math.round(w * scale);
+        const resizeH = Math.round(h * scale);
+        params.append('resize', `${resizeW},${resizeH}`);
+      }
+
       if (lastHash) params.append('last_hash', lastHash);
 
       if (signal.aborted) return null;

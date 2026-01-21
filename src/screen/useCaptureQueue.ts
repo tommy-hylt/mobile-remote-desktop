@@ -32,6 +32,7 @@ export const useCaptureQueue = () => {
           area,
           item.controller.signal,
           latestHashRef.current,
+          item.scale,
         );
 
         if (!result) {
@@ -62,11 +63,12 @@ export const useCaptureQueue = () => {
   );
 
   const fire = useCallback(
-    (area: Rect) => {
+    (area: Rect, scale: number = 1) => {
       const firing: FiringItem = {
         status: 'firing',
         time: Date.now(),
         controller: new AbortController(),
+        scale,
       };
 
       setItems((prev) => [
@@ -79,10 +81,10 @@ export const useCaptureQueue = () => {
     [execute],
   );
 
-  const enqueue = useCallback((area: Rect) => {
+  const enqueue = useCallback((area: Rect, scale: number = 1) => {
     setItems((prev) => [
       ...prev.filter((i) => i.status !== 'queuing'),
-      { status: 'queuing', area, time: Date.now() },
+      { status: 'queuing', area, time: Date.now(), scale },
     ]);
   }, []);
 
@@ -92,7 +94,7 @@ export const useCaptureQueue = () => {
       const currentItems = itemsRef.current;
 
       const validItems = currentItems.filter((i) => {
-        if (i.status === 'firing' && now - i.time > 30000) {
+        if (i.status === 'firing' && now - i.time > 300000) {
           i.controller.abort();
           return false;
         }
@@ -112,6 +114,7 @@ export const useCaptureQueue = () => {
           status: 'firing',
           time: now,
           controller: new AbortController(),
+          scale: queuing.scale,
         };
         setItems(validItems.map((i) => (i === queuing ? firing : i)));
         execute(firing, queuing.area);

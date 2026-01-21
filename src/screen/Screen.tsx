@@ -26,13 +26,13 @@ export const Screen = ({ viewport, screenSize, setViewport }: ScreenProps) => {
   useEffect(() => {
     const tick = () => {
       if (area.w > 0 && area.h > 0) {
-        enqueue(area);
+        enqueue(area, viewport.scale);
       }
     };
 
     const t = setInterval(tick, 1000);
     return () => clearInterval(t);
-  }, [area, enqueue]);
+  }, [area, enqueue, viewport.scale]);
 
   const loading = items.filter((i) => i.status === 'firing').length;
 
@@ -70,7 +70,11 @@ export const Screen = ({ viewport, screenSize, setViewport }: ScreenProps) => {
         />
       ))}
 
-      <RefreshButton fire={fire} area={area} loading={loading} />
+      <RefreshButton
+        fire={() => fire(area, viewport.scale)}
+        area={area}
+        loading={loading}
+      />
       <ZoomOutButton screenSize={screenSize} setViewport={setViewport} />
     </div>
   );

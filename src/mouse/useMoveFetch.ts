@@ -14,7 +14,7 @@ export const useMoveFetch = (cursorPos: { x: number; y: number }) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ x: Math.round(pos.x), y: Math.round(pos.y) }),
-    });
+    }).catch(() => {});
     lastFetchTimeRef.current = Date.now();
   }, []);
 
