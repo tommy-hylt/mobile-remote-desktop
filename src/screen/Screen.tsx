@@ -16,7 +16,7 @@ interface ScreenProps {
 
 export const Screen = ({ viewport, screenSize, onViewportChange }: ScreenProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { images, fetchCapture } = useScreenImages(viewport, screenSize);
+  const { images, fetchCapture, loading } = useScreenImages(viewport, screenSize);
 
   usePinchZoom(containerRef, viewport, onViewportChange);
   useDragPan(containerRef, viewport, onViewportChange);
@@ -46,8 +46,8 @@ export const Screen = ({ viewport, screenSize, onViewportChange }: ScreenProps) 
         style={{
           left: `${viewport.u - 2}px`,
           top: `${viewport.v - 2}px`,
-          width: `${screenSize.width * viewport.scale + 4}px`,
-          height: `${screenSize.height * viewport.scale + 4}px`,
+          width: `${screenSize.width * viewport.scale}px`,
+          height: `${screenSize.height * viewport.scale}px`,
         }}
       />
 
@@ -66,7 +66,7 @@ export const Screen = ({ viewport, screenSize, onViewportChange }: ScreenProps) 
         />
       ))}
 
-      <RefreshButton onClick={() => fetchCapture()} />
+      <RefreshButton onClick={() => fetchCapture()} loading={loading} />
       <ZoomOutButton onClick={handleZoomOut} />
     </div>
   );

@@ -4,10 +4,13 @@ import { Screen } from './screen/Screen';
 import type { ViewportState } from './screen/ViewportState';
 import type { ScreenSize } from './screen/ScreenSize';
 // import { Mouse } from './mouse/Mouse';
+import { useWakeLock } from './useWakeLock';
 
 function App() {
   const [screenSize, setScreenSize] = useState<ScreenSize | null>(null);
   const [viewport, setViewport] = useState<ViewportState | null>(null);
+
+  useWakeLock();
 
   useEffect(() => {
     (async () => {

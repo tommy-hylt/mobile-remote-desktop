@@ -4,4 +4,33 @@
         height: 24px;
         color: #faeb92;
     }
+
+    .count {
+        font-size: 14px;
+        font-weight: bold;
+        color: #faeb92;
+    }
+}
+
+.screen-RefreshButton.loading {
+    /* spin the button itself if it has a count? or just the icon? 
+       If we replace icon with count, spinning the count might be hard to read.
+       The user asked for spinning if loading.
+       Maybe spin the whole button? */
+    animation: spin 1s linear infinite;
+}
+
+/* Remove .icon specific animation since we might not have icon */
+/* .screen-RefreshButton.loading .icon {
+    animation: spin 1s linear infinite;
+} */
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

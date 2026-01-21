@@ -18,7 +18,10 @@ export const useScreenImages = (viewport: ViewportState, screenSize: ScreenSize)
         });
     }, []);
 
-    const { enqueue } = useCaptureManager(handleImage);
+    const { enqueue, fire, items } = useCaptureManager(handleImage);
+
+    // Count firing or queuing items
+    const loading = items.filter(i => i.status === 'firing').length;
 
     const calcArea = useCallback(() => {
         const visibleX = -viewport.u / viewport.scale;
@@ -48,10 +51,11 @@ export const useScreenImages = (viewport: ViewportState, screenSize: ScreenSize)
 
     return {
         images,
+        loading,
         fetchCapture: () => {
             const area = calcArea();
             if (area.w > 0 && area.h > 0) {
-                enqueue(area);
+                fire(area);
             }
         }
     };
