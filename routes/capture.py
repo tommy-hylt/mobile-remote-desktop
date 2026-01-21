@@ -3,6 +3,8 @@ from typing import Optional
 import mss
 import hashlib
 import pyautogui
+from PIL import Image
+from io import BytesIO
 
 router = APIRouter()
 
@@ -30,22 +32,29 @@ def parse_area(area: Optional[str]) -> dict:
 @router.get("/capture")
 def capture(
     area: Optional[str] = None,
+    quality: int = 50,
     last_hash: Optional[str] = Header(None, alias="Last-Hash")
 ):
     monitor = parse_area(area)
 
     with mss.mss() as sct:
         img = sct.grab(monitor)
-        png_data = mss.tools.to_png(img.rgb, img.size)
+        # Convert to PIL Image
+        pil_img = Image.frombytes("RGB", img.size, img.bgra, "raw", "BGRX")
 
-    new_hash = get_image_hash(png_data)
+    # Compress to JPEG
+    buffer = BytesIO()
+    pil_img.save(buffer, format="JPEG", quality=quality, optimize=True)
+    jpeg_data = buffer.getvalue()
+
+    new_hash = get_image_hash(jpeg_data)
 
     # If client provided Last-Hash and it matches, return 204
     if last_hash and last_hash == new_hash:
         return Response(status_code=204, headers={"Next-Hash": new_hash})
 
     return Response(
-        content=png_data,
-        media_type="image/png",
+        content=jpeg_data,
+        media_type="image/jpeg",
         headers={"Next-Hash": new_hash}
     )
