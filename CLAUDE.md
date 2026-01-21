@@ -27,6 +27,7 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
     key_press.py       # POST /key/{key}
     clipboard.py       # GET/POST /clipboard
     shutdown.py        # POST /shutdown
+    websocket.py       # WebSocket /ws endpoint
   /core
     __init__.py
     state.py           # Shared state (mouse_down_timers)
@@ -74,6 +75,48 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
 - `POST /shutdown` - Gracefully shutdown server
 - Release mouse buttons
 
+## WebSocket API
+
+Connection: `ws://localhost:6485/ws`
+
+WebSocket wraps HTTP endpoints. Client sends JSON requests, server responds with JSON (and binary for capture).
+
+### Request Format
+```json
+{
+  "id": "uuid-v4",
+  "method": "GET /screen-size",
+  "params": {}
+}
+```
+
+### Response Format
+```json
+{
+  "id": "uuid-v4",
+  "status": 200,
+  "data": { "width": 1920, "height": 1080 }
+}
+```
+
+### Methods
+| Method | Params | Response |
+|--------|--------|----------|
+| `GET /screen-size` | none | `{ width, height }` |
+| `GET /capture` | `{ area?, quality?, last_hash? }` | Special (see below) |
+| `GET /mouse/position` | none | `{ x, y }` |
+| `POST /mouse/move` | `{ x, y }` | `{ success, x, y }` |
+| `POST /mouse/{button}/{action}` | none | `{ success, button, action }` |
+| `POST /mouse/scroll` | `{ x, y }` | `{ success, x, y }` |
+| `POST /key/{key}` | none | `{ success, key }` |
+| `GET /clipboard` | none | `{ text }` |
+| `POST /clipboard` | `{ text }` | `{ success }` |
+| `POST /shutdown` | none | `{ success, message }` |
+
+### GET /capture Special Case
+- **204 (hash match)**: Single JSON response with `{ next_hash }`
+- **200 (new image)**: Two messages - JSON metadata first `{ next_hash, date }`, then binary JPEG
+
 ## Code Structure
 
 ### core/config.py
@@ -104,6 +147,7 @@ from routes import (
     key_press,
     clipboard,
     shutdown,
+    websocket,
 )
 from core.config import PORT
 
@@ -135,6 +179,7 @@ app.include_router(mouse_scroll.router)
 app.include_router(key_press.router)
 app.include_router(clipboard.router)
 app.include_router(shutdown.router)
+app.include_router(websocket.router)
 
 if __name__ == "__main__":
     import uvicorn
@@ -375,6 +420,7 @@ from . import (
     key_press,
     clipboard,
     shutdown,
+    websocket,
 )
 ```
 
@@ -383,10 +429,11 @@ from . import (
 ```
 # requirements.txt
 fastapi>=0.109.0
-uvicorn>=0.27.0
+uvicorn[standard]>=0.27.0
 pyautogui>=0.9.54
 mss>=9.0.1
 pyperclip>=1.8.2
+Pillow>=10.0.0
 ```
 
 ## Scripts

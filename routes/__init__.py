@@ -8,4 +8,5 @@ from . import (
     key_press,
     clipboard,
     shutdown,
+    websocket,
 )

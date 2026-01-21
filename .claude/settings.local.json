@@ -22,7 +22,8 @@
       "Bash(pip install:*)",
       "Bash(python -m pip install:*)",
       "Bash(python:*)",
-      "Bash(dir \"C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\")"
+      "Bash(dir \"C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\")",
+      "Bash(git config:*)"
     ]
   }
 }

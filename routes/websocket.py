@@ -1,0 +1,125 @@
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from datetime import datetime, timezone
+import json
+
+from routes import screen_size, capture, mouse_position, mouse_move, mouse_button, mouse_scroll, key_press, clipboard, shutdown
+
+router = APIRouter()
+
+
+def format_http_date(dt: datetime) -> str:
+    """Format datetime as HTTP date string."""
+    return dt.strftime("%a, %d %b %Y %H:%M:%S GMT")
+
+
+async def handle_request(websocket: WebSocket, msg: dict) -> None:
+    """Handle a single WebSocket request message."""
+    msg_id = msg.get("id")
+    method = msg.get("method", "")
+    params = msg.get("params", {})
+
+    try:
+        # Route to existing handlers
+        if method == "GET /screen-size":
+            result = screen_size.screen_size()
+            await send_response(websocket, msg_id, 200, result)
+
+        elif method == "GET /capture":
+            await handle_capture(websocket, msg_id, params)
+
+        elif method == "GET /mouse/position":
+            result = mouse_position.mouse_position()
+            await send_response(websocket, msg_id, 200, result)
+
+        elif method == "POST /mouse/move":
+            from routes.mouse_move import Position
+            pos = Position(x=params.get("x"), y=params.get("y"))
+            result = mouse_move.mouse_move(pos)
+            await send_response(websocket, msg_id, 200, result)
+
+        elif method.startswith("POST /mouse/") and method.count("/") == 3:
+            # POST /mouse/{button}/{action}
+            parts = method.split("/")
+            button, action = parts[2], parts[3]
+            result = mouse_button.mouse_button(button, action)
+            await send_response(websocket, msg_id, 200, result)
+
+        elif method == "POST /mouse/scroll":
+            from routes.mouse_scroll import ScrollInput
+            scroll = ScrollInput(x=params.get("x", 0), y=params.get("y", 0))
+            result = mouse_scroll.mouse_scroll(scroll)
+            await send_response(websocket, msg_id, 200, result)
+
+        elif method.startswith("POST /key/"):
+            # POST /key/{key}
+            key = method[10:]  # Remove "POST /key/"
+            result = key_press.key_press(key)
+            await send_response(websocket, msg_id, 200, result)
+
+        elif method == "GET /clipboard":
+            result = clipboard.get_clipboard()
+            await send_response(websocket, msg_id, 200, result)
+
+        elif method == "POST /clipboard":
+            from routes.clipboard import ClipboardText
+            data = ClipboardText(text=params.get("text", ""))
+            result = clipboard.set_clipboard(data)
+            await send_response(websocket, msg_id, 200, result)
+
+        elif method == "POST /shutdown":
+            result = shutdown.shutdown()
+            await send_response(websocket, msg_id, 200, result)
+
+        else:
+            await send_error(websocket, msg_id, 404, f"Unknown method: {method}")
+
+    except Exception as e:
+        await send_error(websocket, msg_id, 500, str(e))
+
+
+async def handle_capture(websocket: WebSocket, msg_id: str, params: dict) -> None:
+    """Handle GET /capture - special case with binary response."""
+    from fastapi import Response
+
+    area = params.get("area")
+    quality = params.get("quality", 50)
+    last_hash = params.get("last_hash")
+
+    # Call existing capture function
+    result = capture.capture(area=area, quality=quality, last_hash=last_hash)
+
+    if isinstance(result, Response):
+        next_hash = result.headers.get("Next-Hash", "")
+        date_str = format_http_date(datetime.now(timezone.utc))
+
+        if result.status_code == 204:
+            await send_response(websocket, msg_id, 204, {"next_hash": next_hash})
+        else:
+            # Send metadata first, then binary
+            await send_response(websocket, msg_id, 200, {"next_hash": next_hash, "date": date_str})
+            await websocket.send_bytes(result.body)
+
+
+async def send_response(websocket: WebSocket, msg_id: str, status: int, data: dict) -> None:
+    """Send a JSON response."""
+    await websocket.send_json({"id": msg_id, "status": status, "data": data})
+
+
+async def send_error(websocket: WebSocket, msg_id: str, status: int, error: str) -> None:
+    """Send an error response."""
+    await websocket.send_json({"id": msg_id, "status": status, "error": error})
+
+
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            try:
+                msg = json.loads(data)
+                await handle_request(websocket, msg)
+            except json.JSONDecodeError:
+                await websocket.send_json({"id": None, "status": 400, "error": "Invalid JSON"})
+    except WebSocketDisconnect:
+        pass

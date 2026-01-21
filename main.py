@@ -15,6 +15,7 @@ from routes import (
     key_press,
     clipboard,
     shutdown,
+    websocket,
 )
 from core.config import PORT
 
@@ -43,6 +44,7 @@ app.include_router(mouse_scroll.router)
 app.include_router(key_press.router)
 app.include_router(clipboard.router)
 app.include_router(shutdown.router)
+app.include_router(websocket.router)
 
 # Mount static files (after API routes so API takes precedence)
 if os.path.exists(STATIC_DIR):
