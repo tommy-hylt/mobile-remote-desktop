@@ -1,9 +1,7 @@
-import { useRef, useEffect, useCallback } from 'react';
-import { uuid } from '../socket/uuid';
-
+import { useRef } from 'react';
 import './Cursor.css';
 import type { ViewportState } from '../screen/ViewportState';
-import { useFetch } from '../socket/useFetch';
+import { useMoveFetch } from './useMoveFetch';
 
 interface CursorProps {
   x: number;
@@ -22,53 +20,9 @@ export const Cursor = ({
   setIsActive,
   setCursorPos,
 }: CursorProps) => {
-  const fetch = useFetch();
-  const lastFetchTimeRef = useRef<number>(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const latestPosRef = useRef(cursorPos);
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
 
-  useEffect(() => {
-    latestPosRef.current = cursorPos;
-  }, [cursorPos]);
-
-  const sendMove = useCallback(
-    (pos: { x: number; y: number }) => {
-      fetch({
-        id: uuid(),
-        method: 'POST /mouse/move',
-        params: { x: Math.round(pos.x), y: Math.round(pos.y) },
-      });
-      lastFetchTimeRef.current = Date.now();
-    },
-    [fetch],
-  );
-
-  useEffect(() => {
-    const now = Date.now();
-    const timeSinceLast = now - lastFetchTimeRef.current;
-
-    // Reduced throttling from 1000ms to 50ms for smoother movement
-    if (timeSinceLast >= 50) {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-      sendMove(cursorPos);
-    } else if (!timeoutRef.current) {
-      const delay = 50 - timeSinceLast;
-      timeoutRef.current = setTimeout(() => {
-        sendMove(latestPosRef.current);
-        timeoutRef.current = null;
-      }, delay);
-    }
-  }, [cursorPos, sendMove]);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
+  useMoveFetch(cursorPos);
 
   return (
     <div
@@ -83,7 +37,6 @@ export const Cursor = ({
       }}
       onPointerDown={(e) => {
         e.stopPropagation();
-        // Capture pointer to ensure we get move events even if cursor goes off element
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
         lastPosRef.current = { x: e.clientX, y: e.clientY };
       }}
@@ -107,11 +60,6 @@ export const Cursor = ({
       onPointerUp={(e) => {
         e.stopPropagation();
         (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-          timeoutRef.current = null;
-          sendMove(latestPosRef.current);
-        }
         lastPosRef.current = null;
       }}
       onPointerCancel={(e) => {

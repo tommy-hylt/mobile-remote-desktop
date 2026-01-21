@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import { SocketProvider } from './socket/SocketProvider';
-import { errorHandler } from './utils/errorHandler.ts';
+import { errorHandler } from './errorHandler.ts';
 
 errorHandler();
 

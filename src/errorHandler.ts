@@ -1,5 +1,4 @@
 export function errorHandler() {
-  // -- ERROR TRAP FOR MOBILE DEBUGGING --
   window.onerror = function (message, source, lineno, colno, error) {
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
@@ -23,7 +22,6 @@ export function errorHandler() {
     document.body.appendChild(overlay);
   };
 
-  // Also catch unhandled promise rejections
   window.onunhandledrejection = function (event) {
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
