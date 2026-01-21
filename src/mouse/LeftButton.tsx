@@ -1,6 +1,9 @@
 import './LeftButton.css';
 
-import type { LeftButtonProps } from './LeftButtonProps';
+interface LeftButtonProps {
+    x: number;
+    y: number;
+}
 
 export const LeftButton = ({ x, y }: LeftButtonProps) => {
     return (

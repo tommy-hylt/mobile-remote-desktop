@@ -4,7 +4,7 @@
 These guidelines reflect the preferred coding style for this project and should be applied to future projects as well.
 
 ## 1. One File for One Component/Function
-*   **Single Responsibility**: Each file should contain only one component or one interface. Multiple interfaces are allowed if they are to combine into one type.
+*   **Single Responsibility**: Each file should contain only one component or one interface. Multiple interfaces are allowed if they are to combine into one type. A component's `Props` are also allowed to be in the same file as the component. 
 *   **File Name**: File name should be exactly the same as the root component or root interface.
 *   **File Size**: Keep file sizes small. Ideally under 60 lines, strictly under 100 lines.
 *   **Split Large Files**: Components growing beyond 100 lines must be split into smaller sub-components or hooks.

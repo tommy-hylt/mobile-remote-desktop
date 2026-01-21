@@ -8,8 +8,14 @@ import { useDragPan } from './useDragPan';
 import { RefreshButton } from './RefreshButton';
 import { ZoomOutButton } from './ZoomOutButton';
 import './Screen.css';
+import type { ScreenSize } from './ScreenSize';
+import type { ViewportState } from './ViewportState';
 
-import type { ScreenProps } from './ScreenProps';
+export interface ScreenProps {
+  viewport: ViewportState;
+  screenSize: ScreenSize;
+  setViewport: (viewport: ViewportState) => void;
+}
 
 export const Screen = ({ viewport, screenSize, setViewport }: ScreenProps) => {
   const containerRef = useRef<HTMLDivElement>(null);

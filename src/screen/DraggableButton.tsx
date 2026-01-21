@@ -2,7 +2,15 @@ import { useRef, useEffect } from 'react';
 import { useDraggable } from './useDraggable';
 import './DraggableButton.css';
 
-import type { DraggableButtonProps } from './DraggableButtonProps';
+import type { ReactNode } from 'react';
+
+interface DraggableButtonProps {
+    onClick: () => void;
+    children: ReactNode;
+    initialX: number;
+    initialY: number;
+    className?: string;
+}
 
 export const DraggableButton = ({ onClick, children, initialX, initialY, className }: DraggableButtonProps) => {
     const { position, isDragging, handlers } = useDraggable({ x: initialX, y: initialY });

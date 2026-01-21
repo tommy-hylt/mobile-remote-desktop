@@ -5,7 +5,11 @@ import { LeftButton } from './LeftButton';
 import { RightButton } from './RightButton';
 import { ScrollButton } from './ScrollButton';
 
-import type { MouseProps } from './MouseProps';
+import type { ViewportState } from '../screen/ViewportState';
+
+interface MouseProps {
+    viewport: ViewportState;
+}
 
 export const Mouse = ({ viewport }: MouseProps) => {
     const [cursorPos, setCursorPos] = useState({ x: 960, y: 540 });

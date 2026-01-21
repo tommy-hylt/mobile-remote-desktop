@@ -2,7 +2,13 @@ import { MdZoomOutMap } from 'react-icons/md';
 import { DraggableButton } from './DraggableButton';
 import './ZoomOutButton.css';
 
-import type { ZoomOutButtonProps } from './ZoomOutButtonProps';
+import type { ScreenSize } from './ScreenSize';
+import type { ViewportState } from './ViewportState';
+
+interface ZoomOutButtonProps {
+    screenSize: ScreenSize;
+    setViewport: (state: ViewportState) => void;
+}
 
 export const ZoomOutButton = ({ screenSize, setViewport }: ZoomOutButtonProps) => {
     const handleZoomOut = () => {

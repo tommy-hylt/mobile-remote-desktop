@@ -2,7 +2,16 @@ import { useRef, useEffect } from 'react';
 
 import './Cursor.css';
 
-import type { CursorProps } from './CursorProps';
+import type { ViewportState } from '../screen/ViewportState';
+
+interface CursorProps {
+    x: number;
+    y: number;
+    cursorPos: { x: number, y: number };
+    viewport: ViewportState;
+    setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+    setCursorPos: React.Dispatch<React.SetStateAction<{ x: number, y: number }>>;
+}
 
 export const Cursor = ({
     x, y, cursorPos, viewport, setIsActive, setCursorPos
@@ -62,7 +71,7 @@ export const Cursor = ({
             }}
             onClick={(e) => {
                 e.stopPropagation();
-                setIsActive(prev => !prev);
+                setIsActive((prev: boolean) => !prev);
             }}
             onTouchStart={(e) => {
                 e.stopPropagation();
@@ -79,7 +88,7 @@ export const Cursor = ({
                 const remoteDx = dx / viewport.scale;
                 const remoteDy = dy / viewport.scale;
 
-                setCursorPos(prev => {
+                setCursorPos((prev: { x: number, y: number }) => {
                     const nextX = Math.max(0, prev.x + remoteDx);
                     const nextY = Math.max(0, prev.y + remoteDy);
                     return { x: nextX, y: nextY };
