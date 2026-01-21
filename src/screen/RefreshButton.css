@@ -1,29 +1,27 @@
 .screen-RefreshButton {
-    .icon {
-        width: 24px;
-        height: 24px;
-        color: #faeb92;
-    }
+  .icon {
+    width: 24px;
+    height: 24px;
+    color: #faeb92;
+  }
 
-    .count {
-        font-size: 14px;
-        font-weight: bold;
-        color: #faeb92;
-    }
+  .count {
+    font-size: 14px;
+    font-weight: bold;
+    color: #faeb92;
+  }
 }
 
 .screen-RefreshButton.loading {
-    animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
-
-
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
 
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }

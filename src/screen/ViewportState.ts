@@ -1,5 +1,5 @@
 export interface ViewportState {
-    u: number;
-    v: number;
-    scale: number;
+  u: number;
+  v: number;
+  scale: number;
 }

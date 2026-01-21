@@ -39,7 +39,11 @@ function App() {
     <div className="App">
       {viewport && screenSize ? (
         <>
-          <Screen viewport={viewport} screenSize={screenSize} setViewport={setViewport} />
+          <Screen
+            viewport={viewport}
+            screenSize={screenSize}
+            setViewport={setViewport}
+          />
           <Mouse viewport={viewport} />
         </>
       ) : (

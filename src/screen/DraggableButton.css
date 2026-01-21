@@ -1,22 +1,24 @@
 .screen-DraggableButton {
-    position: absolute;
+  position: absolute;
 
-    touch-action: none;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: #ff5fcf;
-    border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 10;
-    transition: background-color 0.2s, transform 0.1s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  touch-action: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #ff5fcf;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  transition:
+    background-color 0.2s,
+    transform 0.1s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 
-    &:active {
-        background-color: #9929ea;
-        transform: scale(0.95);
-    }
+  &:active {
+    background-color: #9929ea;
+    transform: scale(0.95);
+  }
 }

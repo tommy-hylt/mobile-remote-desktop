@@ -4,9 +4,10 @@ This application is to let user to remote connection to his desktop from his mob
 
 ## Architecture Overview
 
- The application follows a **Feature-Based Architecture**. Code is organized by domain (Screen, Mouse, Input) rather than technical role (components, utils, hooks).
+The application follows a **Feature-Based Architecture**. Code is organized by domain (Screen, Mouse, Input) rather than technical role (components, utils, hooks).
 
 ### Directory Structure
+
 ```
 src/
 ├── screen/

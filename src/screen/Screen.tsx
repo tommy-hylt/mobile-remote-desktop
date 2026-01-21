@@ -34,21 +34,15 @@ export const Screen = ({ viewport, screenSize, setViewport }: ScreenProps) => {
     return () => clearInterval(t);
   }, [area, enqueue]);
 
-  const loading = items.filter(i => i.status === 'firing').length;
-
-
+  const loading = items.filter((i) => i.status === 'firing').length;
 
   usePinchZoom(containerRef, viewport, setViewport);
   useDragPan(containerRef, viewport, setViewport);
 
-
-
   return (
     <div ref={containerRef} className="screen-Screen">
       {images.length === 0 && (
-        <div className="loading-overlay">
-          Loading remote screen...
-        </div>
+        <div className="loading-overlay">Loading remote screen...</div>
       )}
 
       <div
