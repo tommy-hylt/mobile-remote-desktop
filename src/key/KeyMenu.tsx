@@ -9,19 +9,6 @@ export const KeyMenu = () => {
   const [isPressing, setIsPressing] = useState(false);
   const { send } = useKeySender();
 
-  const addToHistory = (k: string) => {
-    setHistory((prev) => {
-      const newHistory = [k, ...prev.filter((item) => item !== k)].slice(0, 5);
-      return newHistory;
-    });
-  };
-
-  const handleDown = () => {
-    setIsPressing(true);
-    send(text, 'down');
-    addToHistory(text);
-  };
-
   const handleUp = () => {
     setIsPressing(false);
     send(text, 'up');
@@ -54,7 +41,14 @@ export const KeyMenu = () => {
         />
         <button
           className="key-trigger"
-          onPointerDown={handleDown}
+          onPointerDown={() => {
+            setIsPressing(true);
+            send(text, 'down');
+            setHistory((prev) => {
+              const k = text;
+              return [k, ...prev.filter((item) => item !== k)].slice(0, 5);
+            });
+          }}
           onPointerUp={handleUp}
           onPointerLeave={handleUp}
           onPointerCancel={handleUp}
