@@ -34,7 +34,7 @@ export const RefreshMenu = ({
       {qualities.map((q) => (
         <div
           key={q}
-          className={`item ${!auto && quality === q ? 'active' : ''} ${auto ? 'dimmed' : ''}`}
+          className={`item ${quality === q ? 'active' : ''} ${auto ? 'dimmed' : ''}`}
           onClick={() => {
             setQuality(q);
             setAuto(false);

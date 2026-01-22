@@ -53,7 +53,7 @@ export const useCaptureQueue = (quality: number) => {
         setOutputImage({ url, area, hash, time, duration });
         finish(item);
       } catch {
-        // ignore
+        void 0;
       }
     },
     [finish, fetchCapture, quality],

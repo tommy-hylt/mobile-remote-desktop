@@ -4,6 +4,7 @@ import { RefreshButton } from './RefreshButton';
 import './Screen.css';
 import type { ScreenSize } from './ScreenSize';
 import { useArea } from './useArea';
+import { useAutoQuality } from './useAutoQuality';
 import { useCaptureQueue } from './useCaptureQueue';
 import { useDragPan } from './useDragPan';
 import { useImageCache } from './useImageCache';
@@ -20,25 +21,14 @@ export interface ScreenProps {
 export const Screen = ({ viewport, screenSize, setViewport }: ScreenProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [quality, setQuality] = useState(90);
+  const [quality, setQuality] = useState(100);
   const [auto, setAuto] = useState(true);
 
   const { enqueue, fire, outputImage, items } = useCaptureQueue(quality);
   const { images } = useImageCache(outputImage);
   const area = useArea(viewport, screenSize);
 
-  // Auto-quality logic
-  useEffect(() => {
-    if (!auto || !outputImage) return;
-    const { duration } = outputImage;
-    if (duration < 100) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setQuality((prev) => Math.min(100, prev + 10));
-    } else if (duration > 5000) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setQuality((prev) => Math.max(20, prev - 10));
-    }
-  }, [auto, outputImage]);
+  useAutoQuality(auto, outputImage, setQuality);
 
   useEffect(() => {
     const tick = () => {
