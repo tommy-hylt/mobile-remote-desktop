@@ -29,7 +29,7 @@ export const ScrollButton = ({ x, y }: ScrollButtonProps) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ x: 0, y: Math.round(dy * -2) }),
-          }).catch(() => {});
+          }).catch((e) => console.error(e));
           scrollStartRef.current = t.clientY;
         }
       }}

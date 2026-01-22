@@ -18,7 +18,7 @@ export const useFetchCapture = () => {
       const { x, y, w, h } = area;
       const params = new URLSearchParams({
         area: `${x},${y},${w},${h}`,
-        quality: '80',
+        quality: '90',
       });
 
       if (scale < 1) {
