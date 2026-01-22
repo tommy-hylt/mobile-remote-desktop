@@ -16,12 +16,7 @@ export const RightButton = ({ x, y }: RightButtonProps) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: '{}',
-        })
-          .then((res) => {
-            if (!res.ok)
-              console.error('RightDown failed:', res.status, res.statusText);
-          })
-          .catch((e) => console.error(e));
+        }).catch((e) => console.error(e));
       }}
       onPointerUp={(e) => {
         e.stopPropagation();
@@ -29,12 +24,7 @@ export const RightButton = ({ x, y }: RightButtonProps) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: '{}',
-        })
-          .then((res) => {
-            if (!res.ok)
-              console.error('RightUp failed:', res.status, res.statusText);
-          })
-          .catch((e) => console.error(e));
+        }).catch((e) => console.error(e));
       }}
     ></div>
   );

@@ -16,12 +16,7 @@ export const LeftButton = ({ x, y }: LeftButtonProps) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: '{}',
-        })
-          .then(async (res) => {
-            const text = await res.text();
-            console.log('LeftDown auth:', res.status, text);
-          })
-          .catch((e) => console.error(e));
+        }).catch((e) => console.error(e));
       }}
       onPointerUp={(e) => {
         e.stopPropagation();
@@ -29,12 +24,7 @@ export const LeftButton = ({ x, y }: LeftButtonProps) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: '{}',
-        })
-          .then(async (res) => {
-            const text = await res.text();
-            console.log('LeftUp auth:', res.status, text);
-          })
-          .catch((e) => console.error(e));
+        }).catch((e) => console.error(e));
       }}
     ></div>
   );

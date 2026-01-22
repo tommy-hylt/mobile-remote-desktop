@@ -11,20 +11,18 @@ interface RefreshButtonProps {
 }
 
 export const RefreshButton = ({ fire, area, loading }: RefreshButtonProps) => {
-  const handleRefresh = () => {
-    if (area.w > 0 && area.h > 0) {
-      fire(area);
-    }
-  };
-
   return (
     <DraggableButton
-      className={`screen-RefreshButton ${loading && loading > 0 ? 'loading' : ''}`}
-      onClick={handleRefresh}
+      className={`screen-RefreshButton ${loading > 0 ? 'loading' : ''}`}
+      onClick={() => {
+        if (area.w > 0 && area.h > 0) {
+          fire(area);
+        }
+      }}
       initialX={window.innerWidth - 64}
       initialY={16}
     >
-      {loading && loading > 0 ? (
+      {loading > 1 ? (
         <span className="count">{loading}</span>
       ) : (
         <MdRefresh className="icon" />

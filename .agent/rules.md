@@ -2,69 +2,58 @@
 
 These guidelines reflect the preferred coding style for this project and should be applied to future projects as well.
 
-## 1. One File for One Component/Function
+## 1. Single Responsibility & Naming
 
-- **Single Responsibility**: Each file should contain only one component or one interface. Multiple interfaces are allowed if they are to combine into one type. A component's `Props` are also allowed to be in the same file as the component.
-- **File Name**: File name should be exactly the same as the root component or root interface.
-- **File Size**: Keep file sizes small. Ideally under 60 lines, strictly under 100 lines.
-- **Split Large Files**: Components growing beyond 100 lines must be split into smaller sub-components or hooks.
+- **One File, One Export**: Each file should contain exactly one component, interface, or function.
+  - _Exception_: A component's `Props` interface or tightly coupled internal types may reside in the same file.
+- **Filename Consistency**: The filename must exactly match the name of the primary export (e.g., `Screen.tsx` exports `Screen`, `useFetch.ts` exports `useFetch`).
 
-## 2. Comments
+## 2. File Size & Complexity
 
-- **No Comments Allowed**: Do not write comments in the code (no `//` or `/* */`).
-- **Self-Documenting Code**: If you feel the need to explain a block of code with a comment, you must instead refactor the code to make it self-explanatory.
-  - **Descriptive Naming**: Use clear, descriptive names for variables, functions, and classes that explain _what_ they are and _why_ they exist.
-  - **Extraction**: Extract complex logic into small, reasonably named helper functions.
-  - **Types**: Use explicit TypeScript types and interfaces to clarify data structures instead of documenting them.
+- **Strict Limits**: Keep files small and focused. Ideally under 60 lines, strictly under 100 lines.
+- **Decomposition**: Any component growing beyond 100 lines must be split into smaller sub-components or extracted hooks.
 
-## 3. Inline Logic & Anonymous Functions
+## 3. Self-Documenting Code
 
-- **Inline Logic**: For functions only used once in one place, do not name or create them. Write the code directly in the place of use (e.g., inside the event handler prop).
-- **Avoid Named One-Off Functions**: Strictly avoid naming functions that are only used once.
-- **Conciseness**: Prefer arrow functions and concise syntax.
+- **No Comments**: Do not write `//` or `/* */` comments. The code itself must be readable.
+- **Refactor over Explain**: If logic requires explanation, refactor it into properly named functions or variables instead of adding comments.
+- **Explicit Types**: Use TypeScript interfaces to document data structures rather than comments.
 
-## 4. Code Quality & Linting
+## 4. Inline & Concise Logic
 
-- **Zero Warnings**: The codebase must remain free of linting warnings and errors.
-- **No Unused Code**: Strictly remove all unused variables, imports, types, and parameters.
-- **Dead Code**: Do not comment out code for later use; delete it.
+- **Inline Single-Use functions**: Do not name or declare functions that are used only once (e.g., inside an event handler, as component props). Define them inline.
+- **Anonymous Functions**: Prefer anonymous arrow functions for callbacks and one-offs.
+- **Conciseness**: Use concise syntax (implicit returns) where possible.
 
-## 5. File & Folder Structure
+## 5. Code Quality & Linting
 
-- **Feature-Based Organization**: Group code by feature (e.g., `screen`, `mouse`) rather than technical role. Avoid generic top-level folders like `core`, `utils`, or `components`.
-- **No "Core" Modules**: specific types, constants, and logic should reside in their respective feature folders.
-- **Co-location**: Keep related types (`Point.ts`), constants, and sub-components within the feature folder they belong to.
+- **Zero Tolerance**: The codebase must remain free of linting warnings and errors.
+- **No Unused Code**: Delete all unused variables, imports, types, and parameters immediately.
+- **No Dead Code**: Do not comment out code. Delete it.
+- **Formatting**: Use **2 spaces** for indentation.
 
-## 6. Naming & Files
+## 6. Project Structure
 
-- **Meaningful Filenames**: Avoid generic filenames like `constants.ts`, `config.ts`, or `types.ts`. Use specific names that describe the content (e.g., `server.ts` for server configuration, `Rect.ts` for Rect interface).
-- **Function-File Match**: The name of the main exported function or type should match the filename (e.g., `useDebounce` inside `useDebounce.ts`, `ViewportState` inside `ViewportState.ts`).
-- **Separate Type Files**: Define interfaces and types in their own separate files. Do not bundle them.
-- **Co-location**: Place type files in the directory where they are primarily used.
+- **Feature-First**: Organize code by feature (e.g., `screen/`, `mouse/`) rather than technical role (no `components/`, `hooks/`, `utils/`, `configs/`, `types/`).
+- **Co-location**: Keep all related assets (types, constants, styles, sub-components) within their feature folder.
+- **Specificity**: Avoid generic filenames like `types.ts`, `constants.ts`, or `config.ts`. Give files specific, descriptive names (e.g., `ScreenSize.ts`, `MouseConstants.ts`).
 
-## 7. Formatting & Readability
+## 7. CSS & Styling
 
-- **Indentation**: Use **2 spaces** for indentation.
-- Prioritize clarity over brevity.
-- Keep functions small and focused on a single responsibility.
+- **Single File**: Use one plain CSS file per component, named identically (e.g., `Screen.css` for `Screen.tsx`).
+- **Root Scoping**: The top-level class must match the file path structure:
+  - Top-level: `.App`
+  - Feature-level: `.folder-Component` (e.g., `.screen-Screen` for `src/screen/Screen.tsx`)
+- **Strict Nesting**: All inner styles must be nested within this root class. Use simple names for children (e.g., `.icon`, `.container`).
 
-## 8. CSS Files
+## 8. Simplicity
 
-- **Plain CSS**: Plain CSS file of the same name as the component (e.g., `Screen.css` for `Screen.tsx`).
-- **Native Nesting**: Use native CSS nesting to scope styles.
-- **Root Class**: The root element of a component must have a class name that strictly follows the file path convention:
-  - Top-level: `App` for `App.tsx`.
-  - Nested: `[folder]-[Component]` (e.g., `screen-Screen` for `src/screen/Screen.tsx`).
-- **Inner Classes**: Use simple, descriptive names for inner elements (e.g., `.image`), strictly nested within the root class.
+- **Active Cleanup**: Revert debug logging and temporary code immediately after verification.
+- **Minimalism**: Avoid over-engineering. Use the simplest native solution (e.g., string interpolation over `URLSearchParams` for simple queries).
 
-## 9. Simplicity & Cleanup
+## 9. Functional & Concise Logic
 
-- **Active Cleanup**: Always revert debug logging, temporary test code, and unused artifacts immediately after verifying a fix. The codebase should remain clean at all times.
-- **Avoid Over-Engineering**: Do not use complex APIs (like `URLSearchParams`) when a simple string construction sufficies.
-- **Minimal Abstraction**: Use the simplest possible solution that solves the problem.
-
-## 10. Concise Logic
-
-- **Immutability**: Avoid `let` and mutation. Use `const` chains to transform data step-by-step (e.g., `filter` -> `sort` -> `slice`).
-- **Functional Iteration**: Prefer `.map`, `.filter`, and other array methods over traditional `for` loops.
-- **Nullish Coalescing**: Prefer `??` over `||` for default values to strictly handle `null`/`undefined` without suppressing falsy values (e.g. `0`, `""`).
+- **Immutability**: Avoid `let` and mutation. Use `const` and method chaining.
+- **Functional Methods**: Prefer `.map`, `.filter`, `.reduce`, and `.find` over `for` loops.
+- **Nullable Types**: Prefer `undefined` over `null` where possible.
+- **Coalescing**: Use `??` for default values instead of `||` to respect falsy values like `0`.
