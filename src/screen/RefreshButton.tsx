@@ -34,7 +34,9 @@ export const RefreshButton = ({
       initialX={window.innerWidth - 64}
       initialY={16}
     >
-      <div className={!open && loading > 0 ? 'loading' : ''}>
+      <div
+        className={`icon-container ${!open && loading > 0 ? 'loading' : ''}`}
+      >
         {open ? (
           <MdClose />
         ) : loading > 1 ? (

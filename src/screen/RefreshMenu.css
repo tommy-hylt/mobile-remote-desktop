@@ -3,23 +3,54 @@
   top: 100%;
   right: 0;
   margin-top: 8px;
-  background: rgba(30, 30, 30, 0.95);
+  background: #000000;
   backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 8px 0;
   min-width: 160px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  color: white;
+  color: #faeb92;
   font-family:
     system-ui,
     -apple-system,
     sans-serif;
   font-size: 14px;
   z-index: 1000;
-  animation: fadeIn 0.1s ease-out;
+  animation: screen-RefreshMenu-fadeIn 0.1s ease-out;
+
+  .item {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #9929ea;
+      color: #ffffff;
+    }
+
+    &.active {
+      color: #ff5fcf;
+      font-weight: 600;
+    }
+
+    &.dimmed {
+      opacity: 0.5;
+    }
+
+    &.refresh {
+      color: #ff5fcf;
+      font-weight: 600;
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background: #333333;
+    margin: 4px 0;
+  }
 }
 
-@keyframes fadeIn {
+@keyframes screen-RefreshMenu-fadeIn {
   from {
     opacity: 0;
     transform: translateY(-8px);
@@ -28,34 +59,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.screen-RefreshMenu .item {
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.screen-RefreshMenu .item:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.screen-RefreshMenu .item.active {
-  color: #007bff;
-  font-weight: 600;
-}
-
-.screen-RefreshMenu .item.dimmed {
-  opacity: 0.5;
-}
-
-.screen-RefreshMenu .item.refresh {
-  color: #4caf50;
-  font-weight: 600;
-}
-
-.screen-RefreshMenu .divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 4px 0;
 }

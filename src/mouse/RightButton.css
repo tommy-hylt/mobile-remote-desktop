@@ -7,15 +7,15 @@
   transform: translate(-50%, -50%);
   pointer-events: auto;
   touch-action: none;
-  animation: flyOutRight 0.2s ease-out forwards;
+  animation: mouse-RightButton-flyOutRight 0.2s ease-out forwards;
   z-index: 1000;
+
+  &:active {
+    background-color: #9929ea;
+  }
 }
 
-.mouse-RightButton:active {
-  background-color: #9929ea;
-}
-
-@keyframes flyOutRight {
+@keyframes mouse-RightButton-flyOutRight {
   from {
     opacity: 0;
     transform: translate(-50%, -50%) translateX(-40px) scale(0.5);

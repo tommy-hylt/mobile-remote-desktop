@@ -7,15 +7,15 @@
   transform: translate(-50%, -50%);
   pointer-events: auto;
   touch-action: none;
-  animation: flyOutScroll 0.2s ease-out forwards;
+  animation: mouse-ScrollButton-flyOutScroll 0.2s ease-out forwards;
   z-index: 1000;
+
+  &:active {
+    background-color: #9929ea;
+  }
 }
 
-.mouse-ScrollButton:active {
-  background-color: #9929ea;
-}
-
-@keyframes flyOutScroll {
+@keyframes mouse-ScrollButton-flyOutScroll {
   from {
     opacity: 0;
     transform: translate(-50%, -50%) translateY(-40px) scale(0.5);
