@@ -1,0 +1,82 @@
+.text-TextMenu {
+  position: absolute;
+  bottom: 0;
+  right: 100%;
+  margin-right: 8px;
+  background: #000000;
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 8px;
+  min-width: 300px; /* Keep width for textarea availability */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  color: #faeb92;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 14px;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start; /* Align top for multiline text area */
+
+  animation: text-TextMenu-fadeIn 0.1s ease-out;
+
+  textarea {
+    flex: 1;
+    height: 60px; /* Keep height for multiline */
+    background: transparent;
+    color: white;
+    border: none; /* Clean look */
+    border-radius: 8px;
+    padding: 8px;
+    font-family: monospace;
+    resize: none;
+    box-shadow: none;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  button {
+    width: 48px;
+    height: auto;
+    align-self: stretch; /* Stretch to match textarea */
+    border: none;
+    background-color: transparent;
+    color: #faeb92;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: none;
+
+    &:disabled {
+      background-color: transparent;
+      color: #666;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+@keyframes text-TextMenu-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

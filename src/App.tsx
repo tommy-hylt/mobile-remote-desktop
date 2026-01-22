@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
-import { Screen } from './screen/Screen';
-import type { ViewportState } from './screen/ViewportState';
-import type { ScreenSize } from './screen/ScreenSize';
+import { KeyButton } from './key/KeyButton';
 import { Mouse } from './mouse/Mouse';
+import { Screen } from './screen/Screen';
+import type { ScreenSize } from './screen/ScreenSize';
 import { useWakeLock } from './screen/useWakeLock';
+import type { ViewportState } from './screen/ViewportState';
+import { TextButton } from './text/TextButton';
 
 function App() {
   const [screenSize, setScreenSize] = useState<ScreenSize | null>(null);
@@ -45,6 +47,8 @@ function App() {
             setViewport={setViewport}
           />
           <Mouse viewport={viewport} />
+          <TextButton />
+          <KeyButton />
         </>
       ) : (
         <div className="loading">Connecting to remote desktop...</div>

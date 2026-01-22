@@ -33,30 +33,32 @@ export const RefreshButton = ({
       onClick={() => setOpen((prev) => !prev)}
       initialX={window.innerWidth - 64}
       initialY={16}
+      menu={
+        open && (
+          <RefreshMenu
+            quality={quality}
+            setQuality={setQuality}
+            auto={auto}
+            setAuto={setAuto}
+            onRefresh={() => {
+              if (area.w > 0 && area.h > 0) fire(area);
+            }}
+            onClose={() => setOpen(false)}
+          />
+        )
+      }
     >
       <div
         className={`icon-container ${!open && loading > 0 ? 'loading' : ''}`}
       >
         {open ? (
-          <MdClose />
+          <MdClose size={24} />
         ) : loading > 1 ? (
           <span>{loading}</span>
         ) : (
-          <MdRefresh />
+          <MdRefresh size={24} />
         )}
       </div>
-      {open && (
-        <RefreshMenu
-          quality={quality}
-          setQuality={setQuality}
-          auto={auto}
-          setAuto={setAuto}
-          onRefresh={() => {
-            if (area.w > 0 && area.h > 0) fire(area);
-          }}
-          onClose={() => setOpen(false)}
-        />
-      )}
     </DraggableButton>
   );
 };

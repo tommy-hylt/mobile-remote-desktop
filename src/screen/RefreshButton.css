@@ -1,11 +1,6 @@
 .screen-RefreshButton {
   color: #faeb92;
 
-  svg {
-    width: 24px;
-    height: 24px;
-  }
-
   span {
     font-size: 14px;
     font-weight: bold;
