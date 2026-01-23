@@ -1,11 +1,8 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 
-import type { Point } from './Point';
-
-export const useDraggable = (initialPosition: Point) => {
-  const [position, setPosition] = useState(initialPosition);
+export const useDraggable = (onDrag: (dx: number, dy: number) => void) => {
   const isDragging = useRef(false);
-  const dragStartPos = useRef<Point | null>(null);
+  const dragStartPos = useRef<{ x: number; y: number } | null>(null);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     isDragging.current = false;
@@ -18,31 +15,27 @@ export const useDraggable = (initialPosition: Point) => {
       const dx = e.clientX - dragStartPos.current.x;
       const dy = e.clientY - dragStartPos.current.y;
 
-      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      if (Math.abs(dx) > 0 || Math.abs(dy) > 0) {
         isDragging.current = true;
+        onDrag(dx, dy);
+        dragStartPos.current = { x: e.clientX, y: e.clientY };
       }
-
-      setPosition((prev) => ({
-        x: prev.x + dx,
-        y: prev.y + dy,
-      }));
-
-      dragStartPos.current = { x: e.clientX, y: e.clientY };
     }
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
     dragStartPos.current = null;
+    isDragging.current = false;
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
 
   return {
-    position,
     isDragging,
     handlers: {
       onPointerDown: handlePointerDown,
       onPointerMove: handlePointerMove,
       onPointerUp: handlePointerUp,
+      onPointerCancel: handlePointerUp,
     },
   };
 };

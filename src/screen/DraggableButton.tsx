@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './DraggableButton.css';
 import { useDraggable } from './useDraggable';
 
@@ -20,10 +20,15 @@ export const DraggableButton = ({
   className,
   menu,
 }: DraggableButtonProps & { menu?: ReactNode }) => {
-  const { position, isDragging, handlers } = useDraggable({
-    x: initialX,
-    y: initialY,
+  const [position, setPosition] = useState({ x: initialX, y: initialY });
+
+  const { isDragging, handlers } = useDraggable((dx, dy) => {
+    setPosition((prev) => ({
+      x: prev.x + dx,
+      y: prev.y + dy,
+    }));
   });
+
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -31,14 +36,6 @@ export const DraggableButton = ({
     if (!el) return;
 
     const stopPropagation = (e: TouchEvent) => e.stopPropagation();
-
-    // Attach to button for dragging logic if needed, but DraggableButton logic is hook based.
-    // Actually the hook returns handlers to spread on the draggable element.
-    // If we want the WHOLE thing to drag, we spread on wrapper.
-    // But usually we drag by the button handle?
-    // Let's spread handlers on the button, so dragging only happens when touching the button.
-    // But if the menu is separate, it shouldn't trigger drag.
-    // So handlers go on button.
 
     el.addEventListener('touchstart', stopPropagation, { passive: false });
 
@@ -60,9 +57,6 @@ export const DraggableButton = ({
         left: `${position.x}px`,
         top: `${position.y}px`,
         zIndex: 10,
-        // Ensure wrapper doesn't block clicks to things behind it if it has no size?
-        // But it contains button and menu.
-        // We set display flex to keep things together? relative positioning works best.
       }}
     >
       {/* Menu rendered here to be relative to this container */}
@@ -73,10 +67,7 @@ export const DraggableButton = ({
         className={`screen-DraggableButton ${className || ''}`}
         onClick={handleClick}
         {...handlers}
-        // Remove style positioning from button, as wrapper handles it
         style={{
-          // Reset styles that might interfere?
-          // DraggableButton.css sets position absolute. We should probably override that to relative or static?
           position: 'relative',
           left: 'auto',
           top: 'auto',
