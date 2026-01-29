@@ -58,9 +58,11 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
 - `POST /mouse/move` - Body: `{ x, y }` - Moves cursor to position
 
 ### Mouse Button
-- `POST /mouse/{button}/{action}` - Presses mouse button
-  - eg. `POST /mouse/left/down`
-  - eg. `POST /mouse/right/up`
+- `POST /mouse/{button}/{action}` - Mouse button action
+  - `POST /mouse/left/click` - Left click
+  - `POST /mouse/right/click` - Right click
+  - `POST /mouse/left/down` - Hold left button
+  - `POST /mouse/left/up` - Release left button
 - For down, auto-releases after 10s safety timeout if relative up is not called
 
 ### Mouse Scroll

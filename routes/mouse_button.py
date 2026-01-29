@@ -26,6 +26,8 @@ def mouse_button(button: str, action: str):
         if button in mouse_down_timers:
             mouse_down_timers[button].cancel()
             del mouse_down_timers[button]
+    elif action == "click":
+        pyautogui.click(button=button)
     else:
         return {"success": False, "error": "Invalid action"}
 
