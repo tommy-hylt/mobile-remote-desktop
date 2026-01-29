@@ -25,6 +25,7 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
     mouse_button.py    # POST /mouse/{button}/{action}
     mouse_scroll.py    # POST /mouse/scroll
     key_press.py       # POST /key/{key}
+    wake.py            # POST /wake
     clipboard.py       # GET/POST /clipboard
     shutdown.py        # POST /shutdown
     websocket.py       # WebSocket /ws endpoint
@@ -78,6 +79,9 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
 - `GET /clipboard` - Returns `{ text: str }` with current clipboard content
 - `POST /clipboard` - Body: `{ text: str }` - Sets clipboard content
 
+### Wake
+- `POST /wake` - Best-effort wake for screensaver/display sleep
+
 ### Shutdown
 - `POST /shutdown` - Gracefully shutdown server
 - Release mouse buttons
@@ -120,6 +124,7 @@ WebSocket wraps HTTP endpoints. Client sends JSON requests, server responds with
 | `POST /text/{text}` | none | `{ success, text }` |
 | `GET /clipboard` | none | `{ text }` |
 | `POST /clipboard` | `{ text }` | `{ success }` |
+| `POST /wake` | none | `{ success }` |
 | `POST /shutdown` | none | `{ success, message }` |
 
 ### GET /capture Special Case

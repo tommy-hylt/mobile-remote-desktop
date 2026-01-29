@@ -6,6 +6,7 @@ from . import (
     mouse_button,
     mouse_scroll,
     key_press,
+    wake,
     text,
     clipboard,
     shutdown,

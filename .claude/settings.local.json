@@ -24,7 +24,12 @@
       "Bash(python:*)",
       "Bash(dir \"C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\")",
       "Bash(git config:*)",
-      "Bash(cmd /c \"for /f \"\"tokens=5\"\" %a in \\(''netstat -ano ^| findstr :6485''\\) do taskkill /F /PID %a\")"
+      "Bash(cmd /c \"for /f \"\"tokens=5\"\" %a in \\(''netstat -ano ^| findstr :6485''\\) do taskkill /F /PID %a\")",
+      "Bash(cmd /c \"del /f \"\"C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\"\"\")",
+      "Bash(cmd /c \"if exist \"\"C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\"\" \\(echo exists\\) else \\(echo deleted\\)\")",
+      "Bash(cmd /c \"del /f \\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\")",
+      "Bash(cmd /c \"ren \\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul nul_temp && del \\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul_temp\")",
+      "Bash(cmd /c \"ren \"\"\\\\?\\\\C:\\\\Users\\\\User\\\\Desktop\\\\260116 NordRemote\\\\mobile-remote-desktop-server\\\\nul\"\" nul_delete\")"
     ]
   }
 }

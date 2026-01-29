@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import json
 import logging
 
-from routes import screen_size, capture, mouse_position, mouse_move, mouse_button, mouse_scroll, key_press, text, clipboard, shutdown
+from routes import screen_size, capture, mouse_position, mouse_move, mouse_button, mouse_scroll, key_press, wake, text, clipboard, shutdown
 
 router = APIRouter()
 logger = logging.getLogger("uvicorn")
@@ -83,6 +83,10 @@ async def handle_request(websocket: WebSocket, msg: dict) -> None:
 
         elif method == "POST /shutdown":
             result = shutdown.shutdown()
+            await send_response(websocket, msg_id, 200, result, method, client)
+
+        elif method == "POST /wake":
+            result = wake.wake()
             await send_response(websocket, msg_id, 200, result, method, client)
 
         else:
