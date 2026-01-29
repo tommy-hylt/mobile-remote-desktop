@@ -44,9 +44,9 @@ A lightweight RDP-like server for mobile web clients. Built with Python/FastAPI.
 - `GET /screen-size` - Returns `{ width: int, height: int }`
 
 ### Screen Capture
-- `GET /capture` - Returns JPEG image of capture area
+- `GET /capture` - Returns image of capture area
   - Query param `area` (optional): `x,y,w,h` format (e.g., `?area=0,0,800,600`)
-  - Query param `quality` (optional): JPEG quality 1-100 (default: 50)
+  - Query param `quality` (optional): If provided, outputs JPEG with quality 1-100; if omitted, outputs PNG
   - Query param `resize` (optional): `w,h` format (e.g., `?resize=800,600`)
   - If no area specified, captures full screen
   - Header `Last-Hash` (optional): MD5 hash of previous capture
@@ -131,7 +131,7 @@ WebSocket wraps HTTP endpoints. Client sends JSON requests, server responds with
 
 ### GET /capture Special Case
 - **204 (hash match)**: Single JSON response with `{ next_hash }`
-- **200 (new image)**: Two messages - JSON metadata first `{ next_hash, date }`, then binary JPEG
+- **200 (new image)**: Two messages - JSON metadata first `{ next_hash, date }`, then binary PNG or JPEG (depending on quality param)
 
 ## Code Structure
 
@@ -248,7 +248,7 @@ def parse_area(area: Optional[str]) -> dict:
 @router.get("/capture")
 def capture(
     area: Optional[str] = None,
-    quality: int = 50,
+    quality: Optional[int] = None,
     last_hash: Optional[str] = Header(None, alias="Last-Hash")
 ):
     monitor = parse_area(area)
@@ -258,20 +258,26 @@ def capture(
         # Convert to PIL Image
         pil_img = Image.frombytes("RGB", img.size, img.bgra, "raw", "BGRX")
 
-    # Compress to JPEG
     buffer = BytesIO()
-    pil_img.save(buffer, format="JPEG", quality=quality, optimize=True)
-    jpeg_data = buffer.getvalue()
+    if quality is not None:
+        # JPEG with specified quality
+        pil_img.save(buffer, format="JPEG", quality=quality, optimize=True)
+        media_type = "image/jpeg"
+    else:
+        # PNG (lossless)
+        pil_img.save(buffer, format="PNG")
+        media_type = "image/png"
+    image_data = buffer.getvalue()
 
-    new_hash = get_image_hash(jpeg_data)
+    new_hash = get_image_hash(image_data)
 
     # If client provided Last-Hash and it matches, return 204
     if last_hash and last_hash == new_hash:
         return Response(status_code=204, headers={"Next-Hash": new_hash})
 
     return Response(
-        content=jpeg_data,
-        media_type="image/jpeg",
+        content=image_data,
+        media_type=media_type,
         headers={"Next-Hash": new_hash}
     )
 ```

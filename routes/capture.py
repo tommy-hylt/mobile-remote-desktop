@@ -41,7 +41,7 @@ def parse_resize(resize: Optional[str]) -> Optional[tuple]:
 @router.get("/capture")
 def capture(
     area: Optional[str] = None,
-    quality: int = 50,
+    quality: Optional[int] = None,
     resize: Optional[str] = None,
     last_hash: Optional[str] = Header(None, alias="Last-Hash")
 ):
@@ -57,19 +57,25 @@ def capture(
     if resize_dims:
         pil_img = pil_img.resize(resize_dims, Image.Resampling.LANCZOS)
 
-    # Compress to JPEG
     buffer = BytesIO()
-    pil_img.save(buffer, format="JPEG", quality=quality, optimize=True)
-    jpeg_data = buffer.getvalue()
+    if quality is not None:
+        # JPEG with specified quality
+        pil_img.save(buffer, format="JPEG", quality=quality, optimize=True)
+        media_type = "image/jpeg"
+    else:
+        # PNG (lossless)
+        pil_img.save(buffer, format="PNG")
+        media_type = "image/png"
+    image_data = buffer.getvalue()
 
-    new_hash = get_image_hash(jpeg_data)
+    new_hash = get_image_hash(image_data)
 
     # If client provided Last-Hash and it matches, return 204
     if last_hash and last_hash == new_hash:
         return Response(status_code=204, headers={"Next-Hash": new_hash})
 
     return Response(
-        content=jpeg_data,
-        media_type="image/jpeg",
+        content=image_data,
+        media_type=media_type,
         headers={"Next-Hash": new_hash}
     )
