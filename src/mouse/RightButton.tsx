@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useDraggable } from '../screen/useDraggable';
 import './RightButton.css';
 
@@ -9,6 +10,8 @@ interface RightButtonProps {
 
 export const RightButton = ({ x, y, onDrag }: RightButtonProps) => {
   const { handlers } = useDraggable(onDrag);
+  const timerRef = useRef<number | null>(null);
+  const hasFiredDownRef = useRef(false);
 
   return (
     <div
@@ -17,21 +20,40 @@ export const RightButton = ({ x, y, onDrag }: RightButtonProps) => {
       onPointerDown={(e) => {
         handlers.onPointerDown(e);
         e.stopPropagation();
-        fetch('/mouse/right/down', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: '{}',
-        }).catch((e) => console.error(e));
+
+        hasFiredDownRef.current = false;
+        timerRef.current = setTimeout(() => {
+          hasFiredDownRef.current = true;
+          fetch('/mouse/right/down', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}',
+          }).catch((e) => console.error(e));
+        }, 500);
       }}
       onPointerMove={handlers.onPointerMove}
       onPointerUp={(e) => {
         handlers.onPointerUp(e);
         e.stopPropagation();
-        fetch('/mouse/right/up', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: '{}',
-        }).catch((e) => console.error(e));
+
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
+
+        if (hasFiredDownRef.current) {
+          fetch('/mouse/right/up', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}',
+          }).catch((e) => console.error(e));
+        } else {
+          fetch('/mouse/right/click', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}',
+          }).catch((e) => console.error(e));
+        }
       }}
     ></div>
   );
