@@ -9,7 +9,7 @@ interface RightButtonProps {
 }
 
 export const RightButton = ({ x, y, onDrag }: RightButtonProps) => {
-  const { handlers } = useDraggable(onDrag);
+  const { handlers } = useDraggable(onDrag, 300);
   const timerRef = useRef<number | null>(null);
   const hasFiredDownRef = useRef(false);
 

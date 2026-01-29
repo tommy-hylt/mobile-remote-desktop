@@ -10,6 +10,7 @@ interface DraggableButtonProps {
   initialX: number;
   initialY: number;
   className?: string;
+  menu?: ReactNode;
 }
 
 export const DraggableButton = ({
@@ -19,7 +20,7 @@ export const DraggableButton = ({
   initialY,
   className,
   menu,
-}: DraggableButtonProps & { menu?: ReactNode }) => {
+}: DraggableButtonProps) => {
   const [position, setPosition] = useState({ x: initialX, y: initialY });
 
   const { isDragging, handlers } = useDraggable((dx, dy) => {
@@ -27,7 +28,7 @@ export const DraggableButton = ({
       x: prev.x + dx,
       y: prev.y + dy,
     }));
-  });
+  }, 300);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -59,7 +60,6 @@ export const DraggableButton = ({
         zIndex: 10,
       }}
     >
-      {/* Menu rendered here to be relative to this container */}
       {menu}
 
       <button

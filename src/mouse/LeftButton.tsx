@@ -9,7 +9,7 @@ interface LeftButtonProps {
 }
 
 export const LeftButton = ({ x, y, onDrag }: LeftButtonProps) => {
-  const { handlers } = useDraggable(onDrag);
+  const { handlers } = useDraggable(onDrag, 300);
   const timerRef = useRef<number | null>(null);
   const hasFiredDownRef = useRef(false);
 

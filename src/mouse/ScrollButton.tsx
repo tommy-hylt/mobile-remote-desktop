@@ -9,8 +9,8 @@ interface ScrollButtonProps {
 }
 
 export const ScrollButton = ({ x, y, onDrag }: ScrollButtonProps) => {
-  const { handlers } = useDraggable(onDrag);
-  const scrollStartRef = useRef<number | null>(null);
+  const { handlers } = useDraggable(onDrag, 1000);
+  const scrollStartRef = useRef<{ x: number; y: number } | null>(null);
 
   return (
     <div
@@ -19,7 +19,7 @@ export const ScrollButton = ({ x, y, onDrag }: ScrollButtonProps) => {
       onPointerDown={(e) => {
         handlers.onPointerDown(e);
         e.stopPropagation();
-        scrollStartRef.current = e.clientY;
+        scrollStartRef.current = { x: e.clientX, y: e.clientY };
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
       }}
       onPointerMove={(e) => {
@@ -27,15 +27,19 @@ export const ScrollButton = ({ x, y, onDrag }: ScrollButtonProps) => {
         e.stopPropagation();
         if (scrollStartRef.current === null) return;
 
-        const dy = e.clientY - scrollStartRef.current;
+        const dx = e.clientX - scrollStartRef.current.x;
+        const dy = e.clientY - scrollStartRef.current.y;
 
-        if (Math.abs(dy) > 10) {
+        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
           fetch('/mouse/scroll', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ x: 0, y: Math.round(dy * -2) }),
+            body: JSON.stringify({
+              x: Math.round(dx * -2),
+              y: Math.round(dy * -2),
+            }),
           }).catch((e) => console.error(e));
-          scrollStartRef.current = e.clientY;
+          scrollStartRef.current = { x: e.clientX, y: e.clientY };
         }
       }}
       onPointerUp={(e) => {
