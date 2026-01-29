@@ -1,0 +1,28 @@
+.mouse-RightButton {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: #ff5fcf;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  touch-action: none;
+  animation: mouse-RightButton-flyOutRight 0.2s ease-out forwards;
+  z-index: 1000;
+
+  &:active {
+    background-color: #9929ea;
+  }
+}
+
+@keyframes mouse-RightButton-flyOutRight {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(-40px) scale(0.5);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateX(0) scale(1);
+  }
+}

@@ -1,0 +1,104 @@
+.key-KeyMenu {
+  position: absolute;
+  bottom: 0;
+  right: 100%;
+  margin-right: 8px;
+  background: #000000;
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 8px;
+  min-width: 200px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  color: #faeb92;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 14px;
+  z-index: 1000;
+  animation: key-KeyMenu-fadeIn 0.1s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    height: 48px;
+
+    input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      padding: 0 8px;
+      font-family: inherit;
+      font-size: 16px;
+
+      &:focus {
+        outline: none;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .key-trigger {
+    width: 40px;
+    height: auto;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: #faeb92;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:active {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .history {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .history-item {
+      font-size: 12px;
+      opacity: 0.7;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+      }
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background: #333333;
+    margin: 4px 0;
+  }
+}
+
+@keyframes key-KeyMenu-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
