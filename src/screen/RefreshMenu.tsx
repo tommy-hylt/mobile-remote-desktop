@@ -17,7 +17,7 @@ export const RefreshMenu = ({
   onRefresh,
   onClose,
 }: RefreshMenuProps) => {
-  const qualities = [20, 40, 60, 80, 100];
+  const qualities = [30, 50, 80, 90, 100];
 
   return (
     <div className="screen-RefreshMenu" onClick={(e) => e.stopPropagation()}>

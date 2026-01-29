@@ -21,8 +21,11 @@ export const useFetchCapture = () => {
       const { x, y, w, h } = area;
       const params = new URLSearchParams({
         area: `${x},${y},${w},${h}`,
-        quality: quality.toString(),
       });
+
+      if (quality !== 100) {
+        params.append('quality', quality.toString());
+      }
 
       if (scale < 1) {
         const resizeW = Math.round(w * scale);
