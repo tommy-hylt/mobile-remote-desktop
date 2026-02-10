@@ -10,6 +10,7 @@ interface CursorProps {
   viewport: ViewportState;
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
   setCursorPos: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
+  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
 }
 
 export const Cursor = ({
@@ -19,10 +20,11 @@ export const Cursor = ({
   viewport,
   setIsActive,
   setCursorPos,
+  sendCommand,
 }: CursorProps) => {
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
 
-  useMoveFetch(cursorPos);
+  useMoveFetch(cursorPos, sendCommand);
 
   return (
     <div

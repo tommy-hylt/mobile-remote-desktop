@@ -1,6 +1,9 @@
 import { useRef, useEffect, useCallback } from 'react';
 
-export const useMoveFetch = (cursorPos: { x: number; y: number }) => {
+export const useMoveFetch = (
+  cursorPos: { x: number; y: number },
+  sendCommand?: (method: string, params?: Record<string, unknown>) => boolean
+) => {
   const lastFetchTimeRef = useRef<number>(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestPosRef = useRef(cursorPos);
@@ -10,13 +13,17 @@ export const useMoveFetch = (cursorPos: { x: number; y: number }) => {
   }, [cursorPos]);
 
   const sendMove = useCallback((pos: { x: number; y: number }) => {
-    fetch('/mouse/move', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ x: Math.round(pos.x), y: Math.round(pos.y) }),
-    }).catch((e) => console.error(e));
+    const params = { x: Math.round(pos.x), y: Math.round(pos.y) };
+    
+    if (!sendCommand?.('POST /mouse/move', params)) {
+      fetch('/mouse/move', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      }).catch((e) => console.error(e));
+    }
     lastFetchTimeRef.current = Date.now();
-  }, []);
+  }, [sendCommand]);
 
   useEffect(() => {
     const now = Date.now();

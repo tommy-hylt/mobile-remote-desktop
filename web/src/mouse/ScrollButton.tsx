@@ -6,9 +6,10 @@ interface ScrollButtonProps {
   x: number;
   y: number;
   onDrag: (dx: number, dy: number) => void;
+  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
 }
 
-export const ScrollButton = ({ x, y, onDrag }: ScrollButtonProps) => {
+export const ScrollButton = ({ x, y, onDrag, sendCommand }: ScrollButtonProps) => {
   const { handlers } = useDraggable(onDrag, 1000);
   const scrollStartRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -31,14 +32,17 @@ export const ScrollButton = ({ x, y, onDrag }: ScrollButtonProps) => {
         const dy = e.clientY - scrollStartRef.current.y;
 
         if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-          fetch('/mouse/scroll', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              x: Math.round(dx * -2),
-              y: Math.round(dy * -2),
-            }),
-          }).catch((e) => console.error(e));
+          const params = {
+            x: Math.round(dx * -2),
+            y: Math.round(dy * -2),
+          };
+          if (!sendCommand('POST /mouse/scroll', params)) {
+            fetch('/mouse/scroll', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(params),
+            }).catch((e) => console.error(e));
+          }
           scrollStartRef.current = { x: e.clientX, y: e.clientY };
         }
       }}

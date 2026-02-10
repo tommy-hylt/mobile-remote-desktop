@@ -7,13 +7,14 @@ import { useKeySender } from './useKeySender';
 
 interface KeyButtonProps {
   isDesktop?: boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
 }
 
-export const KeyButton = ({ isDesktop }: KeyButtonProps) => {
+export const KeyButton = ({ isDesktop, sendCommand }: KeyButtonProps) => {
   const [active, setActive] = useState(false);
   const [text, setText] = useState('ENTER');
   const [history, setHistory] = useState<string[]>([]);
-  const { send } = useKeySender();
+  const { send } = useKeySender(sendCommand);
 
   useEffect(() => {
     if (!isDesktop) return;
@@ -36,10 +37,6 @@ export const KeyButton = ({ isDesktop }: KeyButtonProps) => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
-      }
-      // Prevent default for some keys like Tab, Alt, etc. to avoid losing focus
-      if (['Tab', 'Alt', 'Control', 'Shift', 'Meta'].includes(e.key) || e.key.startsWith('Arrow')) {
-        // e.preventDefault(); // Don't prevent default for now as it might block browser shortcuts
       }
       send(mapKey(e.key), 'down');
     };
@@ -72,6 +69,7 @@ export const KeyButton = ({ isDesktop }: KeyButtonProps) => {
             setText={setText}
             history={history}
             setHistory={setHistory}
+            sendCommand={sendCommand}
           />
         )
       }

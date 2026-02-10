@@ -6,9 +6,10 @@ interface LeftButtonProps {
   x: number;
   y: number;
   onDrag: (dx: number, dy: number) => void;
+  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
 }
 
-export const LeftButton = ({ x, y, onDrag }: LeftButtonProps) => {
+export const LeftButton = ({ x, y, onDrag, sendCommand }: LeftButtonProps) => {
   const { handlers } = useDraggable(onDrag, 300);
   const timerRef = useRef<number | null>(null);
   const hasFiredDownRef = useRef(false);
@@ -24,11 +25,13 @@ export const LeftButton = ({ x, y, onDrag }: LeftButtonProps) => {
         hasFiredDownRef.current = false;
         timerRef.current = setTimeout(() => {
           hasFiredDownRef.current = true;
-          fetch('/mouse/left/down', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: '{}',
-          }).catch((e) => console.error(e));
+          if (!sendCommand('POST /mouse/left/down')) {
+            fetch('/mouse/left/down', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: '{}',
+            }).catch((e) => console.error(e));
+          }
         }, 500);
       }}
       onPointerMove={handlers.onPointerMove}
@@ -42,17 +45,21 @@ export const LeftButton = ({ x, y, onDrag }: LeftButtonProps) => {
         }
 
         if (hasFiredDownRef.current) {
-          fetch('/mouse/left/up', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: '{}',
-          }).catch((e) => console.error(e));
+          if (!sendCommand('POST /mouse/left/up')) {
+            fetch('/mouse/left/up', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: '{}',
+            }).catch((e) => console.error(e));
+          }
         } else {
-          fetch('/mouse/left/click', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: '{}',
-          }).catch((e) => console.error(e));
+          if (!sendCommand('POST /mouse/left/click')) {
+            fetch('/mouse/left/click', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: '{}',
+            }).catch((e) => console.error(e));
+          }
         }
       }}
     ></div>

@@ -1,6 +1,10 @@
 import { useRef } from 'react';
 
-export const useKeySender = () => {
+type CommandParams = Record<string, unknown>;
+
+export const useKeySender = (
+  sendCommand?: (method: string, params?: CommandParams) => boolean
+) => {
   const queueRef = useRef<Promise<void>>(Promise.resolve());
 
   const parseKeys = (keyString: string): string[] => {
@@ -15,16 +19,21 @@ export const useKeySender = () => {
       const keys = parseKeys(keyString);
       if (action === 'up') keys.reverse();
 
-      try {
-        for (const key of keys) {
-          // Map '.' to 'period' to avoid URL normalization issues
-          const safeKey = key === '.' ? 'period' : key;
+      for (const key of keys) {
+        const safeKey = key === '.' ? 'period' : key;
+
+        // WebSocket doesn't need encoding as it's parsed directly by slicing
+        if (sendCommand?.(`POST /key/${safeKey}/${action}`)) {
+          continue;
+        }
+
+        try {
           await fetch(`/key/${encodeURIComponent(safeKey)}/${action}`, {
             method: 'POST',
           });
+        } catch (e) {
+          console.error(`Failed to send key ${action}`, e);
         }
-      } catch (e) {
-        console.error(`Failed to send key ${action}`, e);
       }
     });
 

@@ -8,11 +8,13 @@ import type { ScreenSize } from './screen/ScreenSize';
 import { useWakeLock } from './screen/useWakeLock';
 import type { ViewportState } from './screen/ViewportState';
 import { TextButton } from './text/TextButton';
+import { useSocket } from './useSocket';
 
 function App() {
   const [screenSize, setScreenSize] = useState<ScreenSize | null>(null);
   const [viewport, setViewport] = useState<ViewportState | null>(null);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1500);
+  const { sendCommand } = useSocket();
 
   useWakeLock();
 
@@ -58,12 +60,12 @@ function App() {
             isDesktop={isDesktop}
           />
           {isDesktop ? (
-            <DesktopMouse viewport={viewport} screenSize={screenSize} />
+            <DesktopMouse viewport={viewport} screenSize={screenSize} sendCommand={sendCommand} />
           ) : (
-            <MobileMouse viewport={viewport} />
+            <MobileMouse viewport={viewport} sendCommand={sendCommand} />
           )}
-          <TextButton />
-          <KeyButton isDesktop={isDesktop} />
+          <TextButton sendCommand={sendCommand} />
+          <KeyButton isDesktop={isDesktop} sendCommand={sendCommand} />
         </>
       ) : (
         <div className="loading">Connecting to remote desktop...</div>

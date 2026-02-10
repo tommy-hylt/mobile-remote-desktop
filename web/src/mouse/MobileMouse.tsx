@@ -9,9 +9,10 @@ import type { ViewportState } from '../screen/ViewportState';
 
 interface MobileMouseProps {
   viewport: ViewportState;
+  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
 }
 
-export const MobileMouse = ({ viewport }: MobileMouseProps) => {
+export const MobileMouse = ({ viewport, sendCommand }: MobileMouseProps) => {
   const [cursorPos, setCursorPos] = useState({ x: 960, y: 540 });
   const [isActive, setIsActive] = useState(false);
   const [offsets, setOffsets] = useState({
@@ -41,6 +42,7 @@ export const MobileMouse = ({ viewport }: MobileMouseProps) => {
         viewport={viewport}
         setIsActive={setIsActive}
         setCursorPos={setCursorPos}
+        sendCommand={sendCommand}
       />
       {isActive && (
         <>
@@ -48,16 +50,19 @@ export const MobileMouse = ({ viewport }: MobileMouseProps) => {
             x={x - BUTTON_OFFSET + offsets.left.x}
             y={y + offsets.left.y}
             onDrag={(dx, dy) => updateOffset('left', dx, dy)}
+            sendCommand={sendCommand}
           />
           <ScrollButton
             x={x + offsets.scroll.x}
             y={y + BUTTON_OFFSET + offsets.scroll.y}
             onDrag={(dx, dy) => updateOffset('scroll', dx, dy)}
+            sendCommand={sendCommand}
           />
           <RightButton
             x={x + BUTTON_OFFSET + offsets.right.x}
             y={y + offsets.right.y}
             onDrag={(dx, dy) => updateOffset('right', dx, dy)}
+            sendCommand={sendCommand}
           />
         </>
       )}
