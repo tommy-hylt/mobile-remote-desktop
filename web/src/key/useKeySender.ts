@@ -17,7 +17,9 @@ export const useKeySender = () => {
 
       try {
         for (const key of keys) {
-          await fetch(`/key/${encodeURIComponent(key)}/${action}`, {
+          // Map '.' to 'period' to avoid URL normalization issues
+          const safeKey = key === '.' ? 'period' : key;
+          await fetch(`/key/${encodeURIComponent(safeKey)}/${action}`, {
             method: 'POST',
           });
         }

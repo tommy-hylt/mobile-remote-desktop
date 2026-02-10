@@ -16,15 +16,16 @@ export interface ScreenProps {
   viewport: ViewportState;
   screenSize: ScreenSize;
   setViewport: (viewport: ViewportState) => void;
+  isDesktop?: boolean;
 }
 
-export const Screen = ({ viewport, screenSize, setViewport }: ScreenProps) => {
+export const Screen = ({ viewport, screenSize, setViewport, isDesktop }: ScreenProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [quality, setQuality] = useState(100);
   const [auto, setAuto] = useState(true);
 
-  const { enqueue, fire, outputImage, items } = useCaptureQueue(quality);
+  const { enqueue, fire, outputImage, items } = useCaptureQueue(quality, isDesktop);
   const { images } = useImageCache(outputImage);
   const area = useArea(viewport, screenSize);
 
@@ -37,9 +38,10 @@ export const Screen = ({ viewport, screenSize, setViewport }: ScreenProps) => {
       }
     };
 
-    const t = setInterval(tick, 1000);
+    const interval = isDesktop ? 333 : 1000;
+    const t = setInterval(tick, interval);
     return () => clearInterval(t);
-  }, [area, enqueue, viewport.scale]);
+  }, [area, enqueue, viewport.scale, isDesktop]);
 
   const loading = items.filter((i) => i.status === 'firing').length;
 

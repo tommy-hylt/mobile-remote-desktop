@@ -5,6 +5,7 @@ import type { FiringItem, RequestItem } from './RequestItem';
 export const useQueueScheduler = (
   setItems: React.Dispatch<React.SetStateAction<RequestItem[]>>,
   execute: (item: FiringItem, area: Rect) => Promise<void>,
+  isDesktop?: boolean,
 ) => {
   useEffect(() => {
     const tick = () => {
@@ -43,7 +44,8 @@ export const useQueueScheduler = (
       });
     };
 
-    const timer = setInterval(tick, 200);
+    const interval = isDesktop ? 100 : 200;
+    const timer = setInterval(tick, interval);
     return () => clearInterval(timer);
-  }, [execute, setItems]);
+  }, [execute, setItems, isDesktop]);
 };

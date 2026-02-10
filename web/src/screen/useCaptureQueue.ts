@@ -5,7 +5,7 @@ import type { ScreenImage } from './ScreenImage';
 import { useFetchCapture } from './useFetchCapture';
 import { useQueueScheduler } from './useQueueScheduler';
 
-export const useCaptureQueue = (quality: number) => {
+export const useCaptureQueue = (quality: number, isDesktop?: boolean) => {
   const [items, setItems] = useState<RequestItem[]>([]);
   const [outputImage, setOutputImage] = useState<ScreenImage | null>(null);
   const latestHashRef = useRef<string | null>(null);
@@ -85,7 +85,7 @@ export const useCaptureQueue = (quality: number) => {
     ]);
   }, []);
 
-  useQueueScheduler(setItems, execute);
+  useQueueScheduler(setItems, execute, isDesktop);
 
   return { items, enqueue, fire, outputImage };
 };

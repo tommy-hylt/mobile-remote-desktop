@@ -14,12 +14,16 @@ def auto_release_key(key: str):
 
 @router.post("/key/{key}")
 def key_press(key: str):
+    if key == "period":
+        key = "."
     pyautogui.press(key)
     return {"success": True, "key": key}
 
 
 @router.post("/key/{key}/{action}")
 def key_action(key: str, action: str):
+    if key == "period":
+        key = "."
     if action == "down":
         pyautogui.keyDown(key)
         if key in key_down_timers:

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import { KeyButton } from './key/KeyButton';
-import { Mouse } from './mouse/Mouse';
+import { MobileMouse } from './mouse/MobileMouse';
+import { DesktopMouse } from './mouse/DesktopMouse';
 import { Screen } from './screen/Screen';
 import type { ScreenSize } from './screen/ScreenSize';
 import { useWakeLock } from './screen/useWakeLock';
@@ -11,8 +12,17 @@ import { TextButton } from './text/TextButton';
 function App() {
   const [screenSize, setScreenSize] = useState<ScreenSize | null>(null);
   const [viewport, setViewport] = useState<ViewportState | null>(null);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1500);
 
   useWakeLock();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 1500);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -45,10 +55,15 @@ function App() {
             viewport={viewport}
             screenSize={screenSize}
             setViewport={setViewport}
+            isDesktop={isDesktop}
           />
-          <Mouse viewport={viewport} />
+          {isDesktop ? (
+            <DesktopMouse viewport={viewport} screenSize={screenSize} />
+          ) : (
+            <MobileMouse viewport={viewport} />
+          )}
           <TextButton />
-          <KeyButton />
+          <KeyButton isDesktop={isDesktop} />
         </>
       ) : (
         <div className="loading">Connecting to remote desktop...</div>

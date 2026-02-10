@@ -34,7 +34,7 @@ app.add_middleware(
 pyautogui.FAILSAFE = False
 
 # Static files directory
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "..", "mobile-remote-desktop-web2", "dist")
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "..", "web", "dist")
 
 # Register API routers
 app.include_router(screen_size.router)

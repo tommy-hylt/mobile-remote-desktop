@@ -7,11 +7,11 @@ import { ScrollButton } from './ScrollButton';
 
 import type { ViewportState } from '../screen/ViewportState';
 
-interface MouseProps {
+interface MobileMouseProps {
   viewport: ViewportState;
 }
 
-export const Mouse = ({ viewport }: MouseProps) => {
+export const MobileMouse = ({ viewport }: MobileMouseProps) => {
   const [cursorPos, setCursorPos] = useState({ x: 960, y: 540 });
   const [isActive, setIsActive] = useState(false);
   const [offsets, setOffsets] = useState({
