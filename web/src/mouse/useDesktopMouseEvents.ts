@@ -21,13 +21,7 @@ export const useDesktopMouseEvents = (
         const dy = e.clientY - lastPos.y;
         if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
           const params = { x: Math.round(dx * -2), y: Math.round(dy * -2) };
-          if (!sendCommand('POST /mouse/scroll', params)) {
-            fetch('/mouse/scroll', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(params),
-            }).catch((err) => console.error(err));
-          }
+          sendCommand('POST /mouse/scroll', params);
           lastPos = { x: e.clientX, y: e.clientY };
         }
       } else {
@@ -44,14 +38,7 @@ export const useDesktopMouseEvents = (
       const buttons = ['left', 'middle', 'right'];
       const button = buttons[e.button];
       if (button) {
-        const method = `POST /mouse/${button}/down`;
-        if (!sendCommand(method)) {
-          fetch(`/mouse/${button}/down`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: '{}',
-          }).catch((err) => console.error(err));
-        }
+        sendCommand(`POST /mouse/${button}/down`);
       }
     };
 
@@ -63,14 +50,7 @@ export const useDesktopMouseEvents = (
       const buttons = ['left', 'middle', 'right'];
       const button = buttons[e.button];
       if (button) {
-        const method = `POST /mouse/${button}/up`;
-        if (!sendCommand(method)) {
-          fetch(`/mouse/${button}/up`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: '{}',
-          }).catch((err) => console.error(err));
-        }
+        sendCommand(`POST /mouse/${button}/up`);
       }
     };
 
@@ -79,13 +59,7 @@ export const useDesktopMouseEvents = (
         x: Math.round(e.deltaX * -0.5),
         y: Math.round(e.deltaY * -0.5),
       };
-      if (!sendCommand('POST /mouse/scroll', params)) {
-        fetch('/mouse/scroll', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(params),
-        }).catch((err) => console.error(err));
-      }
+      sendCommand('POST /mouse/scroll', params);
     };
 
     const handleContextMenu = (e: MouseEvent) => e.preventDefault();

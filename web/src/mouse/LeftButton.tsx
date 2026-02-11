@@ -23,15 +23,9 @@ export const LeftButton = ({ x, y, onDrag, sendCommand }: LeftButtonProps) => {
         e.stopPropagation();
 
         hasFiredDownRef.current = false;
-        timerRef.current = setTimeout(() => {
+        timerRef.current = window.setTimeout(() => {
           hasFiredDownRef.current = true;
-          if (!sendCommand('POST /mouse/left/down')) {
-            fetch('/mouse/left/down', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: '{}',
-            }).catch((e) => console.error(e));
-          }
+          sendCommand('POST /mouse/left/down');
         }, 500);
       }}
       onPointerMove={handlers.onPointerMove}
@@ -40,26 +34,14 @@ export const LeftButton = ({ x, y, onDrag, sendCommand }: LeftButtonProps) => {
         e.stopPropagation();
 
         if (timerRef.current) {
-          clearTimeout(timerRef.current);
+          window.clearTimeout(timerRef.current);
           timerRef.current = null;
         }
 
         if (hasFiredDownRef.current) {
-          if (!sendCommand('POST /mouse/left/up')) {
-            fetch('/mouse/left/up', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: '{}',
-            }).catch((e) => console.error(e));
-          }
+          sendCommand('POST /mouse/left/up');
         } else {
-          if (!sendCommand('POST /mouse/left/click')) {
-            fetch('/mouse/left/click', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: '{}',
-            }).catch((e) => console.error(e));
-          }
+          sendCommand('POST /mouse/left/click');
         }
       }}
     ></div>

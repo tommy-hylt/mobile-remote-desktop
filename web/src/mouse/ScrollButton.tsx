@@ -36,13 +36,7 @@ export const ScrollButton = ({ x, y, onDrag, sendCommand }: ScrollButtonProps) =
             x: Math.round(dx * -2),
             y: Math.round(dy * -2),
           };
-          if (!sendCommand('POST /mouse/scroll', params)) {
-            fetch('/mouse/scroll', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(params),
-            }).catch((e) => console.error(e));
-          }
+          sendCommand('POST /mouse/scroll', params);
           scrollStartRef.current = { x: e.clientX, y: e.clientY };
         }
       }}

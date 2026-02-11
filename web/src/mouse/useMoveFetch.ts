@@ -1,8 +1,10 @@
 import { useRef, useEffect, useCallback } from 'react';
 
+type CommandParams = Record<string, unknown>;
+
 export const useMoveFetch = (
   cursorPos: { x: number; y: number },
-  sendCommand?: (method: string, params?: Record<string, unknown>) => string | null
+  sendCommand?: (method: string, params?: CommandParams) => string | null
 ) => {
   const lastFetchTimeRef = useRef<number>(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -15,13 +17,9 @@ export const useMoveFetch = (
   const sendMove = useCallback((pos: { x: number; y: number }) => {
     const params = { x: Math.round(pos.x), y: Math.round(pos.y) };
     
-    if (!sendCommand?.('POST /mouse/move', params)) {
-      fetch('/mouse/move', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      }).catch((e) => console.error(e));
-    }
+    // Only send move over WebSocket. Do not fallback to HTTP to avoid clogging.
+    sendCommand?.('POST /mouse/move', params);
+    
     lastFetchTimeRef.current = Date.now();
   }, [sendCommand]);
 
