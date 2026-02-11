@@ -3,7 +3,7 @@ import { useRef } from 'react';
 type CommandParams = Record<string, unknown>;
 
 export const useKeySender = (
-  sendCommand?: (method: string, params?: CommandParams) => boolean
+  sendCommand?: (method: string, params?: CommandParams) => string | null
 ) => {
   const queueRef = useRef<Promise<void>>(Promise.resolve());
 

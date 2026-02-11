@@ -17,15 +17,17 @@ export interface ScreenProps {
   screenSize: ScreenSize;
   setViewport: (viewport: ViewportState) => void;
   isDesktop?: boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
+  addListener: (listener: (data: unknown) => void) => () => void;
 }
 
-export const Screen = ({ viewport, screenSize, setViewport, isDesktop }: ScreenProps) => {
+export const Screen = ({ viewport, screenSize, setViewport, isDesktop, sendCommand, addListener }: ScreenProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [quality, setQuality] = useState(100);
   const [auto, setAuto] = useState(true);
 
-  const { enqueue, fire, outputImage, items } = useCaptureQueue(quality, isDesktop);
+  const { enqueue, fire, outputImage, items } = useCaptureQueue(quality, isDesktop, sendCommand, addListener);
   const { images } = useImageCache(outputImage);
   const area = useArea(viewport, screenSize);
 

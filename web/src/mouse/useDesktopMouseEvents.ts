@@ -6,7 +6,7 @@ export const useDesktopMouseEvents = (
   viewport: ViewportState,
   screenSize: ScreenSize,
   setCursorPos: (pos: { x: number; y: number }) => void,
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null
 ) => {
   useEffect(() => {
     let isMiddleDown = false;

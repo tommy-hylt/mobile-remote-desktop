@@ -5,7 +5,12 @@ import type { ScreenImage } from './ScreenImage';
 import { useFetchCapture } from './useFetchCapture';
 import { useQueueScheduler } from './useQueueScheduler';
 
-export const useCaptureQueue = (quality: number, isDesktop?: boolean) => {
+export const useCaptureQueue = (
+  quality: number,
+  isDesktop?: boolean,
+  sendCommand?: (method: string, params?: Record<string, unknown>) => string | null,
+  addListener?: (listener: (data: unknown) => void) => () => void
+) => {
   const [items, setItems] = useState<RequestItem[]>([]);
   const [outputImage, setOutputImage] = useState<ScreenImage | null>(null);
   const latestHashRef = useRef<string | null>(null);
@@ -30,6 +35,8 @@ export const useCaptureQueue = (quality: number, isDesktop?: boolean) => {
           latestHashRef.current,
           item.scale,
           quality,
+          sendCommand,
+          addListener
         );
 
         if (!result) {

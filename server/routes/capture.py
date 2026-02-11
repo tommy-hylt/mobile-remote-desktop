@@ -5,6 +5,7 @@ import hashlib
 import pyautogui
 from PIL import Image
 from io import BytesIO
+from core.desktop import ensure_desktop
 
 router = APIRouter()
 
@@ -45,6 +46,7 @@ def capture(
     resize: Optional[str] = None,
     last_hash: Optional[str] = Header(None, alias="Last-Hash")
 ):
+    ensure_desktop()
     monitor = parse_area(area)
 
     with mss.mss() as sct:

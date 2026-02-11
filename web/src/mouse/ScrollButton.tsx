@@ -6,7 +6,7 @@ interface ScrollButtonProps {
   x: number;
   y: number;
   onDrag: (dx: number, dy: number) => void;
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const ScrollButton = ({ x, y, onDrag, sendCommand }: ScrollButtonProps) => {

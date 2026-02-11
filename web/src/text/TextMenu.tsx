@@ -5,7 +5,7 @@ import { useTextSender } from './useTextSender';
 
 interface TextMenuProps {
   onClose: () => void;
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const TextMenu = ({ onClose, sendCommand }: TextMenuProps) => {

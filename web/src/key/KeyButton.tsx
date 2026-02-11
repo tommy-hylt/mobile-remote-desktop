@@ -7,7 +7,7 @@ import { useKeySender } from './useKeySender';
 
 interface KeyButtonProps {
   isDesktop?: boolean;
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const KeyButton = ({ isDesktop, sendCommand }: KeyButtonProps) => {

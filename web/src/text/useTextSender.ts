@@ -4,7 +4,7 @@ type CommandParams = Record<string, unknown>;
 
 export const useTextSender = (
   onComplete: () => void,
-  sendCommand?: (method: string, params?: CommandParams) => boolean
+  sendCommand?: (method: string, params?: CommandParams) => string | null
 ) => {
   const [isSending, setIsSending] = useState(false);
 

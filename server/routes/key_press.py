@@ -3,6 +3,7 @@ import pyautogui
 import threading
 
 from core.state import key_down_timers
+from core.desktop import ensure_desktop
 
 router = APIRouter()
 
@@ -14,6 +15,7 @@ def auto_release_key(key: str):
 
 @router.post("/key/{key}")
 def key_press(key: str):
+    ensure_desktop()
     if key == "period":
         key = "."
     pyautogui.press(key)
@@ -22,6 +24,7 @@ def key_press(key: str):
 
 @router.post("/key/{key}/{action}")
 def key_action(key: str, action: str):
+    ensure_desktop()
     if key == "period":
         key = "."
     if action == "down":

@@ -10,7 +10,7 @@ interface CursorProps {
   viewport: ViewportState;
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
   setCursorPos: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const Cursor = ({

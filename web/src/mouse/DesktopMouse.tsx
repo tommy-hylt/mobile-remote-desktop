@@ -8,7 +8,7 @@ import { useDesktopMouseEvents } from './useDesktopMouseEvents';
 interface DesktopMouseProps {
   viewport: ViewportState;
   screenSize: ScreenSize;
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const DesktopMouse = ({ viewport, screenSize, sendCommand }: DesktopMouseProps) => {

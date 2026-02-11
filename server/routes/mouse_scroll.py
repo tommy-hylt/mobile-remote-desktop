@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 import pyautogui
+from core.desktop import ensure_desktop
 
 router = APIRouter()
 
@@ -12,6 +13,7 @@ class ScrollInput(BaseModel):
 
 @router.post("/mouse/scroll")
 def mouse_scroll(scroll: ScrollInput):
+    ensure_desktop()
     pyautogui.scroll(scroll.y)
     if scroll.x != 0:
         pyautogui.hscroll(scroll.x)

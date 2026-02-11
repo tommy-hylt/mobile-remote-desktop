@@ -14,7 +14,7 @@ function App() {
   const [screenSize, setScreenSize] = useState<ScreenSize | null>(null);
   const [viewport, setViewport] = useState<ViewportState | null>(null);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1500);
-  const { sendCommand } = useSocket();
+  const { sendCommand, addListener } = useSocket();
 
   useWakeLock();
 
@@ -58,6 +58,8 @@ function App() {
             screenSize={screenSize}
             setViewport={setViewport}
             isDesktop={isDesktop}
+            sendCommand={sendCommand}
+            addListener={addListener}
           />
           {isDesktop ? (
             <DesktopMouse viewport={viewport} screenSize={screenSize} sendCommand={sendCommand} />

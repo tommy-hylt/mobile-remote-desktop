@@ -5,7 +5,7 @@ import './TextButton.css';
 import { TextMenu } from './TextMenu';
 
 interface TextButtonProps {
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const TextButton = ({ sendCommand }: TextButtonProps) => {

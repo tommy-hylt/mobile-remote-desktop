@@ -2,7 +2,7 @@ import { useRef, useEffect, useCallback } from 'react';
 
 export const useMoveFetch = (
   cursorPos: { x: number; y: number },
-  sendCommand?: (method: string, params?: Record<string, unknown>) => boolean
+  sendCommand?: (method: string, params?: Record<string, unknown>) => string | null
 ) => {
   const lastFetchTimeRef = useRef<number>(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

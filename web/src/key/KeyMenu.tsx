@@ -8,7 +8,7 @@ interface KeyMenuProps {
   setText: (text: string) => void;
   history: string[];
   setHistory: (val: string[] | ((prev: string[]) => string[])) => void;
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const KeyMenu = ({

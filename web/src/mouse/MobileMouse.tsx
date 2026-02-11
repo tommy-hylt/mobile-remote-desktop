@@ -9,7 +9,7 @@ import type { ViewportState } from '../screen/ViewportState';
 
 interface MobileMouseProps {
   viewport: ViewportState;
-  sendCommand: (method: string, params?: Record<string, unknown>) => boolean;
+  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const MobileMouse = ({ viewport, sendCommand }: MobileMouseProps) => {
