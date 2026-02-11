@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { KeyButton } from './key/KeyButton';
 import { MobileMouse } from './mouse/MobileMouse';
-import { DesktopMouse } from './mouse/DesktopMouse';
 import { Screen } from './screen/Screen';
 import type { ScreenSize } from './screen/ScreenSize';
 import { useWakeLock } from './screen/useWakeLock';
@@ -61,9 +60,7 @@ function App() {
             sendCommand={sendCommand}
             addListener={addListener}
           />
-          {isDesktop ? (
-            <DesktopMouse viewport={viewport} screenSize={screenSize} sendCommand={sendCommand} />
-          ) : (
+          {!isDesktop && (
             <MobileMouse viewport={viewport} sendCommand={sendCommand} />
           )}
           <TextButton sendCommand={sendCommand} />

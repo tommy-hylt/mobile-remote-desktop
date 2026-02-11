@@ -2,7 +2,7 @@ import { useRef, useEffect, useCallback } from 'react';
 
 type CommandParams = Record<string, unknown>;
 
-export const useMoveFetch = (
+export const useMoveSender = (
   cursorPos: { x: number; y: number },
   sendCommand?: (method: string, params?: CommandParams) => string | null
 ) => {
@@ -16,10 +16,7 @@ export const useMoveFetch = (
 
   const sendMove = useCallback((pos: { x: number; y: number }) => {
     const params = { x: Math.round(pos.x), y: Math.round(pos.y) };
-    
-    // Only send move over WebSocket. Do not fallback to HTTP to avoid clogging.
     sendCommand?.('POST /mouse/move', params);
-    
     lastFetchTimeRef.current = Date.now();
   }, [sendCommand]);
 

@@ -63,7 +63,7 @@ export const useCaptureQueue = (
         void 0;
       }
     },
-    [finish, fetchCapture, quality],
+    [finish, fetchCapture, quality, sendCommand, addListener],
   );
 
   const fire = useCallback(

@@ -11,6 +11,9 @@ import { useImageCache } from './useImageCache';
 import { usePinchZoom } from './usePinchZoom';
 import type { ViewportState } from './ViewportState';
 import { ZoomOutButton } from './ZoomOutButton';
+import { DesktopMouse } from '../mouse/DesktopMouse';
+import { useMoveSender } from '../mouse/useMoveSender';
+import { useDesktopMouseEvents } from '../mouse/useDesktopMouseEvents';
 
 export interface ScreenProps {
   viewport: ViewportState;
@@ -21,13 +24,26 @@ export interface ScreenProps {
   addListener: (listener: (data: unknown) => void) => () => void;
 }
 
-export const Screen = ({ viewport, screenSize, setViewport, isDesktop, sendCommand, addListener }: ScreenProps) => {
+export const Screen = ({
+  viewport,
+  screenSize,
+  setViewport,
+  isDesktop,
+  sendCommand,
+  addListener,
+}: ScreenProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [cursorPos, setCursorPos] = useState({ x: 960, y: 540 });
 
   const [quality, setQuality] = useState(100);
   const [auto, setAuto] = useState(true);
 
-  const { enqueue, fire, outputImage, items } = useCaptureQueue(quality, isDesktop, sendCommand, addListener);
+  const { enqueue, fire, outputImage, items } = useCaptureQueue(
+    quality,
+    isDesktop,
+    sendCommand,
+    addListener
+  );
   const { images } = useImageCache(outputImage);
   const area = useArea(viewport, screenSize);
 
@@ -49,6 +65,16 @@ export const Screen = ({ viewport, screenSize, setViewport, isDesktop, sendComma
 
   usePinchZoom(containerRef, viewport, setViewport);
   useDragPan(containerRef, viewport, setViewport);
+
+  // Desktop specific logic
+  useMoveSender(cursorPos, isDesktop ? sendCommand : undefined);
+  useDesktopMouseEvents(
+    containerRef,
+    viewport,
+    screenSize,
+    setCursorPos,
+    isDesktop ? sendCommand : ((): string | null => null)
+  );
 
   return (
     <div ref={containerRef} className="screen-Screen">
@@ -80,6 +106,8 @@ export const Screen = ({ viewport, screenSize, setViewport, isDesktop, sendComma
           }}
         />
       ))}
+
+      {isDesktop && <DesktopMouse cursorPos={cursorPos} viewport={viewport} />}
 
       <RefreshButton
         fire={() => fire(area, viewport.scale)}

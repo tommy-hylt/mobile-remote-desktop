@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import './Cursor.css';
 import type { ViewportState } from '../screen/ViewportState';
-import { useMoveFetch } from './useMoveFetch';
+import { useMoveSender } from './useMoveSender';
 
 interface CursorProps {
   x: number;
@@ -24,7 +24,7 @@ export const Cursor = ({
 }: CursorProps) => {
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
 
-  useMoveFetch(cursorPos, sendCommand);
+  useMoveSender(cursorPos, sendCommand);
 
   return (
     <div

@@ -3,12 +3,16 @@ import type { ViewportState } from '../screen/ViewportState';
 import type { ScreenSize } from '../screen/ScreenSize';
 
 export const useDesktopMouseEvents = (
+  containerRef: React.RefObject<HTMLDivElement | null>,
   viewport: ViewportState,
   screenSize: ScreenSize,
   setCursorPos: (pos: { x: number; y: number }) => void,
   sendCommand: (method: string, params?: Record<string, unknown>) => string | null
 ) => {
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
     let isMiddleDown = false;
     let lastPos = { x: 0, y: 0 };
 
@@ -20,8 +24,7 @@ export const useDesktopMouseEvents = (
         const dx = e.clientX - lastPos.x;
         const dy = e.clientY - lastPos.y;
         if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
-          const params = { x: Math.round(dx * -2), y: Math.round(dy * -2) };
-          sendCommand('POST /mouse/scroll', params);
+          sendCommand('POST /mouse/scroll', { x: Math.round(dx * -2), y: Math.round(dy * -2) });
           lastPos = { x: e.clientX, y: e.clientY };
         }
       } else {
@@ -55,27 +58,26 @@ export const useDesktopMouseEvents = (
     };
 
     const handleWheel = (e: WheelEvent) => {
-      const params = {
+      sendCommand('POST /mouse/scroll', {
         x: Math.round(e.deltaX * -0.5),
         y: Math.round(e.deltaY * -0.5),
-      };
-      sendCommand('POST /mouse/scroll', params);
+      });
     };
 
     const handleContextMenu = (e: MouseEvent) => e.preventDefault();
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('contextmenu', handleContextMenu);
-    window.addEventListener('wheel', handleWheel);
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('contextmenu', handleContextMenu);
+    container.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('contextmenu', handleContextMenu);
-      window.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('contextmenu', handleContextMenu);
+      container.removeEventListener('wheel', handleWheel);
     };
-  }, [viewport, screenSize, setCursorPos, sendCommand]);
+  }, [containerRef, viewport, screenSize, setCursorPos, sendCommand]);
 };
