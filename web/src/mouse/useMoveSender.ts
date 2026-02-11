@@ -7,18 +7,21 @@ export const useMoveSender = (
   sendCommand?: (method: string, params?: CommandParams) => string | null
 ) => {
   const lastFetchTimeRef = useRef<number>(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const latestPosRef = useRef(cursorPos);
 
   useEffect(() => {
     latestPosRef.current = cursorPos;
   }, [cursorPos]);
 
-  const sendMove = useCallback((pos: { x: number; y: number }) => {
-    const params = { x: Math.round(pos.x), y: Math.round(pos.y) };
-    sendCommand?.('POST /mouse/move', params);
-    lastFetchTimeRef.current = Date.now();
-  }, [sendCommand]);
+  const sendMove = useCallback(
+    (pos: { x: number; y: number }) => {
+      const params = { x: Math.round(pos.x), y: Math.round(pos.y) };
+      sendCommand?.('POST /mouse/move', params);
+      lastFetchTimeRef.current = Date.now();
+    },
+    [sendCommand]
+  );
 
   useEffect(() => {
     const now = Date.now();
@@ -32,7 +35,7 @@ export const useMoveSender = (
       sendMove(cursorPos);
     } else if (!timeoutRef.current) {
       const delay = 50 - timeSinceLast;
-      timeoutRef.current = setTimeout(() => {
+      timeoutRef.current = window.setTimeout(() => {
         sendMove(latestPosRef.current);
         timeoutRef.current = null;
       }, delay);

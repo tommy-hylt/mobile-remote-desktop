@@ -54,7 +54,10 @@ export const useFetchCapture = () => {
               'id' in msg &&
               msg.id === requestId
             ) {
-              const response = msg as unknown as { status: number; data?: CaptureMetadata };
+              const response = msg as unknown as {
+                status: number;
+                data?: CaptureMetadata;
+              };
               if (response.status === 204) {
                 removeListener();
                 resolve(null);
