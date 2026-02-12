@@ -1,11 +1,11 @@
 import { useRef, useEffect, useCallback } from 'react';
-
-type CommandParams = Record<string, unknown>;
+import { useSocket } from '../useSocket';
 
 export const useMoveSender = (
   cursorPos: { x: number; y: number },
-  sendCommand?: (method: string, params?: CommandParams) => string | null
+  isActive: boolean = true
 ) => {
+  const { sendCommand } = useSocket();
   const lastFetchTimeRef = useRef<number>(0);
   const timeoutRef = useRef<number | null>(null);
   const latestPosRef = useRef(cursorPos);
@@ -16,11 +16,12 @@ export const useMoveSender = (
 
   const sendMove = useCallback(
     (pos: { x: number; y: number }) => {
+      if (!isActive) return;
       const params = { x: Math.round(pos.x), y: Math.round(pos.y) };
-      sendCommand?.('POST /mouse/move', params);
+      sendCommand('POST /mouse/move', params);
       lastFetchTimeRef.current = Date.now();
     },
-    [sendCommand]
+    [sendCommand, isActive]
   );
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export const useMoveSender = (
 
     if (timeSinceLast >= 50) {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+        window.clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
       sendMove(cursorPos);
@@ -44,7 +45,7 @@ export const useMoveSender = (
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
   }, []);
 };

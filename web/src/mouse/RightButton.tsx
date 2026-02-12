@@ -1,15 +1,16 @@
 import { useRef } from 'react';
 import { useDraggable } from '../screen/useDraggable';
 import './RightButton.css';
+import { useSocket } from '../useSocket';
 
 interface RightButtonProps {
   x: number;
   y: number;
   onDrag: (dx: number, dy: number) => void;
-  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
-export const RightButton = ({ x, y, onDrag, sendCommand }: RightButtonProps) => {
+export const RightButton = ({ x, y, onDrag }: RightButtonProps) => {
+  const { sendCommand } = useSocket();
   const { handlers } = useDraggable(onDrag, 300);
   const timerRef = useRef<number | null>(null);
   const hasFiredDownRef = useRef(false);

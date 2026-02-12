@@ -5,12 +5,7 @@ import type { ScreenImage } from './ScreenImage';
 import { useFetchCapture } from './useFetchCapture';
 import { useQueueScheduler } from './useQueueScheduler';
 
-export const useCaptureQueue = (
-  quality: number,
-  isDesktop?: boolean,
-  sendCommand?: (method: string, params?: Record<string, unknown>) => string | null,
-  addListener?: (listener: (data: unknown) => void) => () => void
-) => {
+export const useCaptureQueue = (quality: number, isDesktop?: boolean) => {
   const [items, setItems] = useState<RequestItem[]>([]);
   const [outputImage, setOutputImage] = useState<ScreenImage | null>(null);
   const latestHashRef = useRef<string | null>(null);
@@ -34,9 +29,7 @@ export const useCaptureQueue = (
           item.controller.signal,
           latestHashRef.current,
           item.scale,
-          quality,
-          sendCommand,
-          addListener
+          quality
         );
 
         if (!result) {
@@ -63,7 +56,7 @@ export const useCaptureQueue = (
         void 0;
       }
     },
-    [finish, fetchCapture, quality, sendCommand, addListener],
+    [finish, fetchCapture, quality]
   );
 
   const fire = useCallback(
@@ -82,7 +75,7 @@ export const useCaptureQueue = (
 
       execute(firing, area);
     },
-    [execute],
+    [execute]
   );
 
   const enqueue = useCallback((area: Rect, scale: number = 1) => {

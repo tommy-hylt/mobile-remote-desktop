@@ -1,15 +1,16 @@
 import { useRef } from 'react';
 import { useDraggable } from '../screen/useDraggable';
 import './ScrollButton.css';
+import { useSocket } from '../useSocket';
 
 interface ScrollButtonProps {
   x: number;
   y: number;
   onDrag: (dx: number, dy: number) => void;
-  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
-export const ScrollButton = ({ x, y, onDrag, sendCommand }: ScrollButtonProps) => {
+export const ScrollButton = ({ x, y, onDrag }: ScrollButtonProps) => {
+  const { sendCommand } = useSocket();
   const { handlers } = useDraggable(onDrag, 1000);
   const scrollStartRef = useRef<{ x: number; y: number } | null>(null);
 

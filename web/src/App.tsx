@@ -7,20 +7,16 @@ import type { ScreenSize } from './screen/ScreenSize';
 import { useWakeLock } from './screen/useWakeLock';
 import type { ViewportState } from './screen/ViewportState';
 import { TextButton } from './text/TextButton';
-import { useSocket } from './useSocket';
 
 function App() {
   const [screenSize, setScreenSize] = useState<ScreenSize | null>(null);
   const [viewport, setViewport] = useState<ViewportState | null>(null);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1500);
-  const { sendCommand, addListener } = useSocket();
 
   useWakeLock();
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth > 1500);
-    };
+    const handleResize = () => setIsDesktop(window.innerWidth > 1500);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -32,10 +28,7 @@ function App() {
         if (response.ok) {
           const size = await response.json();
           setScreenSize(size);
-          const scaleW = window.innerWidth / size.width;
-          const scaleH = window.innerHeight / size.height;
-          const scale = Math.min(scaleW, scaleH);
-
+          const scale = Math.min(window.innerWidth / size.width, window.innerHeight / size.height);
           setViewport({
             u: (window.innerWidth - size.width * scale) / 2,
             v: 0,
@@ -57,14 +50,10 @@ function App() {
             screenSize={screenSize}
             setViewport={setViewport}
             isDesktop={isDesktop}
-            sendCommand={sendCommand}
-            addListener={addListener}
           />
-          {!isDesktop && (
-            <MobileMouse viewport={viewport} sendCommand={sendCommand} />
-          )}
-          <TextButton sendCommand={sendCommand} />
-          <KeyButton isDesktop={isDesktop} sendCommand={sendCommand} />
+          {!isDesktop && <MobileMouse viewport={viewport} />}
+          <TextButton />
+          <KeyButton isDesktop={isDesktop} />
         </>
       ) : (
         <div className="loading">Connecting to remote desktop...</div>

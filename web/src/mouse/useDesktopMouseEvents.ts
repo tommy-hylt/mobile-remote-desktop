@@ -1,15 +1,19 @@
 import { useEffect } from 'react';
 import type { ViewportState } from '../screen/ViewportState';
 import type { ScreenSize } from '../screen/ScreenSize';
+import { useSocket } from '../useSocket';
 
 export const useDesktopMouseEvents = (
   containerRef: React.RefObject<HTMLDivElement | null>,
   viewport: ViewportState,
   screenSize: ScreenSize,
   setCursorPos: (pos: { x: number; y: number }) => void,
-  sendCommand: (method: string, params?: Record<string, unknown>) => string | null
+  isActive: boolean = true
 ) => {
+  const { sendCommand } = useSocket();
+
   useEffect(() => {
+    if (!isActive) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -79,5 +83,5 @@ export const useDesktopMouseEvents = (
       container.removeEventListener('contextmenu', handleContextMenu);
       container.removeEventListener('wheel', handleWheel);
     };
-  }, [containerRef, viewport, screenSize, setCursorPos, sendCommand]);
+  }, [containerRef, viewport, screenSize, setCursorPos, sendCommand, isActive]);
 };

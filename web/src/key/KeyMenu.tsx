@@ -8,7 +8,6 @@ interface KeyMenuProps {
   setText: (text: string) => void;
   history: string[];
   setHistory: (val: string[] | ((prev: string[]) => string[])) => void;
-  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
 export const KeyMenu = ({
@@ -16,10 +15,9 @@ export const KeyMenu = ({
   setText,
   history,
   setHistory,
-  sendCommand,
 }: KeyMenuProps) => {
   const [isPressing, setIsPressing] = useState(false);
-  const { send } = useKeySender(sendCommand);
+  const { send } = useKeySender();
 
   const handleUp = () => {
     setIsPressing(false);

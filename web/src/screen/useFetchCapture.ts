@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import type { Rect } from './Rect';
+import { useSocket } from '../useSocket';
 
 export interface CaptureResult {
   url: string;
@@ -14,18 +15,15 @@ interface CaptureMetadata {
 }
 
 export const useFetchCapture = () => {
+  const { sendCommand, addListener } = useSocket();
+
   return useCallback(
     async (
       area: Rect,
       signal: AbortSignal,
       lastHash: string | null,
       scale: number = 1,
-      quality: number = 90,
-      sendCommand?: (
-        method: string,
-        params?: Record<string, unknown>
-      ) => string | null,
-      addListener?: (listener: (data: unknown) => void) => () => void
+      quality: number = 90
     ): Promise<CaptureResult | null> => {
       const start = Date.now();
       const { x, y, w, h } = area;
@@ -130,6 +128,6 @@ export const useFetchCapture = () => {
         return null;
       }
     },
-    []
+    [sendCommand, addListener]
   );
 };

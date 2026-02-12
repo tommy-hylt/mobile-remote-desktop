@@ -1,18 +1,15 @@
 import { useState } from 'react';
+import { useSocket } from '../useSocket';
 
-type CommandParams = Record<string, unknown>;
-
-export const useTextSender = (
-  onComplete: () => void,
-  sendCommand?: (method: string, params?: CommandParams) => string | null
-) => {
+export const useTextSender = (onComplete: () => void) => {
+  const { sendCommand } = useSocket();
   const [isSending, setIsSending] = useState(false);
 
   const sendText = async (text: string) => {
     setIsSending(true);
 
     const wsMethod = `POST /text/${text}`;
-    if (!sendCommand?.(wsMethod)) {
+    if (!sendCommand(wsMethod)) {
       try {
         await fetch(`/text/${encodeURIComponent(text)}`, {
           method: 'POST',

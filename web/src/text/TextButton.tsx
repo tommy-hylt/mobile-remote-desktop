@@ -4,11 +4,7 @@ import { DraggableButton } from '../screen/DraggableButton';
 import './TextButton.css';
 import { TextMenu } from './TextMenu';
 
-interface TextButtonProps {
-  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
-}
-
-export const TextButton = ({ sendCommand }: TextButtonProps) => {
+export const TextButton = () => {
   const [active, setActive] = useState(false);
 
   return (
@@ -18,11 +14,7 @@ export const TextButton = ({ sendCommand }: TextButtonProps) => {
         onClick={() => setActive(!active)}
         initialX={window.innerWidth - 64}
         initialY={window.innerHeight - 80}
-        menu={
-          active && (
-            <TextMenu onClose={() => setActive(false)} sendCommand={sendCommand} />
-          )
-        }
+        menu={active && <TextMenu onClose={() => setActive(false)} />}
       >
         <div className="icon-container">
           {active ? <MdClose size={24} /> : <MdKeyboard size={24} />}

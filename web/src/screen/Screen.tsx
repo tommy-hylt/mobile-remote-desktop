@@ -20,8 +20,6 @@ export interface ScreenProps {
   screenSize: ScreenSize;
   setViewport: (viewport: ViewportState) => void;
   isDesktop?: boolean;
-  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
-  addListener: (listener: (data: unknown) => void) => () => void;
 }
 
 export const Screen = ({
@@ -29,8 +27,6 @@ export const Screen = ({
   screenSize,
   setViewport,
   isDesktop,
-  sendCommand,
-  addListener,
 }: ScreenProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [cursorPos, setCursorPos] = useState({ x: 960, y: 540 });
@@ -40,9 +36,7 @@ export const Screen = ({
 
   const { enqueue, fire, outputImage, items } = useCaptureQueue(
     quality,
-    isDesktop,
-    sendCommand,
-    addListener
+    isDesktop
   );
   const { images } = useImageCache(outputImage);
   const area = useArea(viewport, screenSize);
@@ -66,15 +60,8 @@ export const Screen = ({
   usePinchZoom(containerRef, viewport, setViewport);
   useDragPan(containerRef, viewport, setViewport);
 
-  // Desktop specific logic
-  useMoveSender(cursorPos, isDesktop ? sendCommand : undefined);
-  useDesktopMouseEvents(
-    containerRef,
-    viewport,
-    screenSize,
-    setCursorPos,
-    isDesktop ? sendCommand : ((): string | null => null)
-  );
+  useMoveSender(cursorPos, isDesktop);
+  useDesktopMouseEvents(containerRef, viewport, screenSize, setCursorPos, isDesktop);
 
   return (
     <div ref={containerRef} className="screen-Screen">

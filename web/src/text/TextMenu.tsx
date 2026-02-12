@@ -5,12 +5,11 @@ import { useTextSender } from './useTextSender';
 
 interface TextMenuProps {
   onClose: () => void;
-  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
-export const TextMenu = ({ onClose, sendCommand }: TextMenuProps) => {
+export const TextMenu = ({ onClose }: TextMenuProps) => {
   const [text, setText] = useState('');
-  const { isSending, sendText } = useTextSender(onClose, sendCommand);
+  const { isSending, sendText } = useTextSender(onClose);
 
   const handleSend = () => {
     if (text) {

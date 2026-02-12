@@ -1,10 +1,8 @@
 import { useRef } from 'react';
+import { useSocket } from '../useSocket';
 
-type CommandParams = Record<string, unknown>;
-
-export const useKeySender = (
-  sendCommand?: (method: string, params?: CommandParams) => string | null
-) => {
+export const useKeySender = () => {
+  const { sendCommand } = useSocket();
   const queueRef = useRef<Promise<void>>(Promise.resolve());
 
   const parseKeys = (keyString: string): string[] => {
@@ -22,8 +20,7 @@ export const useKeySender = (
       for (const key of keys) {
         const safeKey = key === '.' ? 'period' : key;
 
-        // WebSocket doesn't need encoding as it's parsed directly by slicing
-        if (sendCommand?.(`POST /key/${safeKey}/${action}`)) {
+        if (sendCommand(`POST /key/${safeKey}/${action}`)) {
           continue;
         }
 

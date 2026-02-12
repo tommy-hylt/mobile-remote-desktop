@@ -7,14 +7,13 @@ import { useKeySender } from './useKeySender';
 
 interface KeyButtonProps {
   isDesktop?: boolean;
-  sendCommand: (method: string, params?: Record<string, unknown>) => string | null;
 }
 
-export const KeyButton = ({ isDesktop, sendCommand }: KeyButtonProps) => {
+export const KeyButton = ({ isDesktop }: KeyButtonProps) => {
   const [active, setActive] = useState(false);
   const [text, setText] = useState('ENTER');
   const [history, setHistory] = useState<string[]>([]);
-  const { send } = useKeySender(sendCommand);
+  const { send } = useKeySender();
 
   useEffect(() => {
     if (!isDesktop) return;
@@ -69,7 +68,6 @@ export const KeyButton = ({ isDesktop, sendCommand }: KeyButtonProps) => {
             setText={setText}
             history={history}
             setHistory={setHistory}
-            sendCommand={sendCommand}
           />
         )
       }
