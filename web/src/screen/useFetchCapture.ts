@@ -44,7 +44,7 @@ export const useFetchCapture = () => {
           const timeoutId = window.setTimeout(() => {
             removeListener();
             resolve(null);
-          }, 5000);
+          }, 180000);
 
           const removeListener = addListener((msg) => {
             if (signal.aborted) {

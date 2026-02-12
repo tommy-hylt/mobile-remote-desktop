@@ -15,7 +15,7 @@ export const useQueueScheduler = (
         const now = Date.now();
 
         const validItems = currentItems.filter((i) => {
-          if (i.status === 'firing' && now - i.time > 10000) {
+          if (i.status === 'firing' && now - i.time > 180000) {
             i.controller.abort();
             return false;
           }
