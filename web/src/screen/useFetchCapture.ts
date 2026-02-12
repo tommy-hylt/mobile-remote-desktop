@@ -41,8 +41,14 @@ export const useFetchCapture = () => {
           let metadata: CaptureMetadata | null = null;
           let requestId: string | null = null;
 
+          const timeoutId = window.setTimeout(() => {
+            removeListener();
+            resolve(null);
+          }, 5000);
+
           const removeListener = addListener((msg) => {
             if (signal.aborted) {
+              window.clearTimeout(timeoutId);
               removeListener();
               resolve(null);
               return;
@@ -59,15 +65,18 @@ export const useFetchCapture = () => {
                 data?: CaptureMetadata;
               };
               if (response.status === 204) {
+                window.clearTimeout(timeoutId);
                 removeListener();
                 resolve(null);
               } else if (response.status === 200 && response.data) {
                 metadata = response.data;
               } else {
+                window.clearTimeout(timeoutId);
                 removeListener();
                 resolve(null);
               }
             } else if (metadata && msg instanceof Blob) {
+              window.clearTimeout(timeoutId);
               removeListener();
               const url = URL.createObjectURL(msg);
               resolve({

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Rect } from './Rect';
 import type { FiringItem, RequestItem } from './RequestItem';
 
@@ -7,13 +7,15 @@ export const useQueueScheduler = (
   execute: (item: FiringItem, area: Rect) => Promise<void>,
   isDesktop?: boolean,
 ) => {
+  const lastFinishTimeRef = useRef<number>(0);
+
   useEffect(() => {
     const tick = () => {
       setItems((currentItems) => {
         const now = Date.now();
 
         const validItems = currentItems.filter((i) => {
-          if (i.status === 'firing' && now - i.time > 300000) {
+          if (i.status === 'firing' && now - i.time > 10000) {
             i.controller.abort();
             return false;
           }
@@ -26,7 +28,11 @@ export const useQueueScheduler = (
           (i) => i.status === 'firing',
         ).length;
 
-        if (queuing && firingCount === 0) {
+        // Ensure a safe interval between captures (e.g. 100ms)
+        const cooldown = isDesktop ? 50 : 200;
+        const isCooldownOver = now - lastFinishTimeRef.current > cooldown;
+
+        if (queuing && firingCount === 0 && isCooldownOver) {
           const firing: FiringItem = {
             status: 'firing',
             time: now,
@@ -34,7 +40,9 @@ export const useQueueScheduler = (
             scale: queuing.scale,
           };
 
-          execute(firing, queuing.area);
+          execute(firing, queuing.area).finally(() => {
+            lastFinishTimeRef.current = Date.now();
+          });
           return validItems.map((i) => (i === queuing ? firing : i));
         } else if (cleanupNeeded) {
           return validItems;
@@ -44,7 +52,7 @@ export const useQueueScheduler = (
       });
     };
 
-    const interval = isDesktop ? 100 : 200;
+    const interval = isDesktop ? 50 : 100;
     const timer = setInterval(tick, interval);
     return () => clearInterval(timer);
   }, [execute, setItems, isDesktop]);
