@@ -40,8 +40,12 @@ export const RefreshButton = ({
             setQuality={setQuality}
             auto={auto}
             setAuto={setAuto}
-            onRefresh={() => {
-              fetch('/wake', { method: 'POST' }).catch(() => {});
+            onRefresh={async () => {
+              try {
+                await fetch('/wake', { method: 'POST' });
+              } catch (e) {
+                // Ignore wake errors
+              }
               if (area.w > 0 && area.h > 0) fire(area);
             }}
             onClose={() => setOpen(false)}

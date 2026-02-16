@@ -31,35 +31,40 @@ def wake_console():
     This fixes the 'Black Screen' when RDP is disconnected.
     Requires Administrator privileges.
     """
-    if sys_platform_is_windows():
-        try:
-            # 1. Get the current session ID using query session
-            # We look for the active session or the session associated with our process
-            kernel32 = ctypes.windll.kernel32
-            current_session_id = ctypes.c_uint32()
-            if not kernel32.ProcessIdToSessionId(kernel32.GetCurrentProcessId(), ctypes.byref(current_session_id)):
-                return False
-            
-            sid = current_session_id.value
-            
-            # 2. Use tscon to move this session to the console (ID 1 usually)
-            # We try common console IDs: 1, 2, 0
-            # On Hyper-V, console is often session 1
-            for console_id in [1, 2, 0]:
-                if sid == console_id: continue # Already on that console?
-                
-                cmd = f"tscon.exe {sid} /dest:console"
-                # Executing via shell to handle potential permission elevation needs
-                result = subprocess.run(cmd, shell=True, capture_output=True)
-                if result.returncode == 0:
-                    logger.info(f"Successfully moved session {sid} to console via ID {console_id}")
-                    return True
-            
+    if not sys_platform_is_windows():
+        return False
+
+    try:
+        # Get the current session ID associated with this process
+        kernel32 = ctypes.windll.kernel32
+        current_session_id = ctypes.c_uint32()
+        if not kernel32.ProcessIdToSessionId(kernel32.GetCurrentProcessId(), ctypes.byref(current_session_id)):
+            logger.error("Could not determine current session ID")
             return False
-        except Exception as e:
-            logger.error(f"Failed to wake console: {e}")
+        
+        sid = current_session_id.value
+        logger.info(f"Attempting to wake console for session {sid}...")
+
+        # Use tscon to move this session to the console.
+        # /dest:console is the universal keyword for the physical/Hyper-V monitor.
+        cmd = f"tscon.exe {sid} /dest:console"
+        
+        # We run this via subprocess
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            logger.info(f"Successfully executed tscon for session {sid}")
+            return True
+        else:
+            logger.error(f"tscon failed with code {result.returncode}: {result.stderr}")
+            # Try a common alternative for older Windows versions
+            alt_cmd = f"tscon.exe %sessionname% /dest:console"
+            subprocess.run(alt_cmd, shell=True)
             return False
-    return False
+            
+    except Exception as e:
+        logger.error(f"Error during wake_console: {e}")
+        return False
 
 def sys_platform_is_windows():
     return sys.platform == 'win32'
