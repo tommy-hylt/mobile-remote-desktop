@@ -41,6 +41,7 @@ export const RefreshButton = ({
             auto={auto}
             setAuto={setAuto}
             onRefresh={() => {
+              fetch('/wake', { method: 'POST' }).catch(() => {});
               if (area.w > 0 && area.h > 0) fire(area);
             }}
             onClose={() => setOpen(false)}
