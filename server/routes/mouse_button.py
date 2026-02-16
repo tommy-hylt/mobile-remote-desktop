@@ -3,7 +3,6 @@ import pyautogui
 import threading
 
 from core.state import mouse_down_timers
-from core.desktop import ensure_desktop
 
 router = APIRouter()
 
@@ -15,7 +14,6 @@ def auto_release_button(button: str):
 
 @router.post("/mouse/{button}/{action}")
 def mouse_button(button: str, action: str):
-    ensure_desktop()
     if action == "down":
         pyautogui.mouseDown(button=button)
         if button in mouse_down_timers:
